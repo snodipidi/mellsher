@@ -84,7 +84,8 @@ function fanworkCard(item) {
     </article>`;
   }
   return `<article class="card fanwork">
-    <div class="poster thumb" style="--thumb:url('${esc(item.thumb)}')">
+    <div class="poster thumb">
+      <img src="${esc(item.thumb)}" alt="" loading="lazy">
       <a class="poster-link" href="${esc(item.href)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(item.title)}"></a>
       <span class="poster-kicker">${esc(kicker)}</span>
     </div>
@@ -129,8 +130,9 @@ function watchCard(item, index) {
   }
   const label = index ? `${index}. ${item.title}` : item.title;
   const kicker = item.kicker || item.school || "";
-  return `<article class="card">
-    <div class="poster thumb" style="--thumb:url('${esc(item.thumb)}')">
+  return `<article class="card clip-card">
+    <div class="poster thumb">
+      <img src="${esc(item.thumb)}" alt="" loading="lazy">
       <a class="poster-link" href="${esc(item.href)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(item.title)}"></a>
       ${kicker ? `<span class="poster-kicker">${esc(kicker)}</span>` : ""}
     </div>
@@ -139,6 +141,28 @@ function watchCard(item, index) {
       <a class="btn pink" href="${esc(item.href)}" target="_blank" rel="noopener noreferrer">▶ Смотреть</a>
     </div>
   </article>`;
+}
+
+function scrollerRow(html) {
+  return `<div class="scroller-wrap">
+    <button type="button" class="scroller-nav prev" data-scroll="-1" aria-label="Назад">‹</button>
+    <div class="scroller">${html}</div>
+    <button type="button" class="scroller-nav next" data-scroll="1" aria-label="Вперёд">›</button>
+  </div>`;
+}
+
+function bindScrollers(root = document) {
+  $$(".scroller-wrap", root).forEach((wrap) => {
+    const scroller = $(".scroller", wrap);
+    if (!scroller) return;
+    wrap.addEventListener("click", (event) => {
+      const btn = event.target.closest("[data-scroll]");
+      if (!btn || !wrap.contains(btn)) return;
+      const dir = Number(btn.dataset.scroll) || 1;
+      const step = Math.max(scroller.clientWidth * 0.8, 220);
+      scroller.scrollBy({ left: dir * step, behavior: "smooth" });
+    });
+  });
 }
 
 function sectionTitle(text, href, label = "Смотреть больше") {
@@ -216,7 +240,6 @@ function mountChrome(active) {
         <nav aria-label="Разделы">
           <h2>На сайте</h2>
           <a href="streams.html">Топ нарезок</a>
-          <a href="series.html">Сериалы шоу</a>
           <a href="films.html">Рецензии фильмов</a>
           <a href="index.html#tour">Прощальный тур</a>
           <a href="index.html#merch">Мерч</a>
@@ -258,7 +281,9 @@ function bindChrome() {
       pop.innerHTML = "";
       return;
     }
-    const clips = CLIPS.filter((item) => !item.stub && `${item.title} ${item.kicker}`.toLowerCase().includes(q)).slice(0, 4);
+    const clips = [...MUSIC_CLIPS, ...CLIPS]
+      .filter((item) => !item.stub && `${item.title} ${item.kicker || ""}`.toLowerCase().includes(q))
+      .slice(0, 6);
     const streams = STREAMS.filter((item) => `${item.title} ${item.blurb}`.toLowerCase().includes(q)).slice(0, 4);
     const releases = RELEASES.filter((item) => !item.stub && `${item.title} ${item.kind || ""}`.toLowerCase().includes(q)).slice(0, 3);
     const series = SERIES.filter((item) => !item.stub && item.title?.toLowerCase().includes(q)).slice(0, 3);
@@ -350,6 +375,15 @@ function filmScore(value) {
 }
 
 function filmCard(item) {
+  if (item.stub) {
+    return `<article class="film stub has-poster score-only">
+      <div class="film-poster stub-film"></div>
+      <div class="film-body">
+        <h3>Скоро</h3>
+        <div class="film-scores"><span>MellSher —</span><span>Кинопоиск —</span></div>
+      </div>
+    </article>`;
+  }
   const poster = item.image
     ? `<div class="film-poster"><img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy"></div>`
     : "";
@@ -390,28 +424,32 @@ function renderHome() {
         ${sectionTitle("Мерч", SITE.merch, "Весь магазин")}
         <div class="merch-grid">${MERCH.map(merchCard).join("")}</div>
       </section>
-      <section class="section" id="clips">
-        ${sectionTitle("Топ нарезок", "streams.html")}
-        <div class="scroller">${CLIPS.map((item, i) => watchCard(item, i + 1)).join("")}</div>
-      </section>
-      <section class="section" id="series">
-        <div class="series-stage">
-          <button class="series-nav prev" type="button" data-prev aria-label="Предыдущий сериал">‹</button>
-          <button class="series-nav next" type="button" data-next aria-label="Следующий сериал">›</button>
-          <div data-series></div>
-        </div>
-        <div class="dots" data-dots></div>
-      </section>
-      <section class="section">
+      <section class="section" id="releases">
         ${sectionTitle("Релизы", "music.html")}
         <div class="release-grid">
           ${RELEASES.filter((item) => !item.stub).slice(0, 5).map((item) => releaseCard(item, { teaser: true })).join("")}
         </div>
       </section>
+      <section class="section" id="music-clips">
+        ${sectionTitle("Клипы", "music.html#clips", "Все клипы")}
+        ${scrollerRow(MUSIC_CLIPS.map((item) => watchCard(item)).join(""))}
+      </section>
+      <section class="section" id="clips">
+        ${sectionTitle("Топ нарезок", "streams.html")}
+        ${scrollerRow(CLIPS.map((item, i) => watchCard(item, i + 1)).join(""))}
+      </section>
       <section class="section" id="films">
         ${sectionTitle("Рецензии фильмов", "films.html")}
-        <p class="lede">Оценки MellSher рядом с оценкой Кинопоиска.</p>
-        <div class="film-grid">${FILMS.slice(0, 7).map(filmCard).join("")}</div>
+        <div class="film-strip">
+          <h3 class="strip-title">С реакциями</h3>
+          <p class="lede">Оценки MellSher рядом с оценкой Кинопоиска.</p>
+          <div class="film-grid">${FILMS.slice(0, 7).map(filmCard).join("")}</div>
+        </div>
+        <div class="film-strip">
+          <h3 class="strip-title">Только оценки</h3>
+          <p class="lede">Короткие оценки без разборов — пока заглушки.</p>
+          <div class="film-grid">${FILM_SCORES.map(filmCard).join("")}</div>
+        </div>
         <div class="center"><a class="pill" href="films.html">Все рецензии</a></div>
       </section>
       <section class="section" id="links">
@@ -431,7 +469,7 @@ function renderHome() {
     </section>`;
 
   $("[data-down]").addEventListener("click", () => $("#tour").scrollIntoView({ behavior: "smooth" }));
-  renderSeries(0);
+  bindScrollers($("#page"));
   const frame = $(".live-frame iframe");
   const host = location.hostname || "localhost";
   frame.src = `https://player.twitch.tv/?channel=mellsher&parent=${encodeURIComponent(host)}&muted=true`;
@@ -697,11 +735,18 @@ function renderMusic() {
         </div>
         <div class="music-grid tracks-grid" data-tracks-grid></div>
       </section>
+      <section class="section" id="clips">
+        ${sectionTitle("Клипы")}
+        <div class="catalog clips-catalog">${MUSIC_CLIPS.map((item) => watchCard(item)).join("")}</div>
+      </section>
     </div>`;
   renderTrackGrid("solo");
   $("[data-track-sort]").addEventListener("change", (event) => {
     renderTrackGrid(event.target.value);
   });
+  if (location.hash === "#clips") {
+    requestAnimationFrame(() => $("#clips")?.scrollIntoView({ behavior: "smooth" }));
+  }
 }
 
 function renderFor() {
@@ -736,8 +781,16 @@ function renderFilms() {
   $("#page").innerHTML = `
     <div class="wrap page">
       <h1 class="page-title">Рецензии фильмов</h1>
-      <p class="lede">Что MellSher уже смотрел: его оценка и оценка Кинопоиска. Если оценки нет, в карточке остаётся его реакция.</p>
-      <div class="film-grid">${FILMS.map(filmCard).join("")}</div>
+      <div class="film-strip">
+        <h2 class="block-title">С реакциями</h2>
+        <p class="lede">Что MellSher уже смотрел: его оценка и оценка Кинопоиска. Если оценки нет, в карточке остаётся его реакция.</p>
+        <div class="film-grid">${FILMS.map(filmCard).join("")}</div>
+      </div>
+      <div class="film-strip">
+        <h2 class="block-title">Только оценки</h2>
+        <p class="lede">Короткие оценки без разборов — пока заглушки.</p>
+        <div class="film-grid">${FILM_SCORES.map(filmCard).join("")}</div>
+      </div>
     </div>`;
 }
 

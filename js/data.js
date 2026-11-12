@@ -561,6 +561,15 @@ const FILMS = [
   { id: "wolverine", title: "Люди Х: Начало. Росомаха", score: "7.5", kp: "7.4", image: "assets/films/wolverine.jpg" },
 ];
 
+const FILM_SCORES = [
+  { id: "score-1", stub: true },
+  { id: "score-2", stub: true },
+  { id: "score-3", stub: true },
+  { id: "score-4", stub: true },
+  { id: "score-5", stub: true },
+  { id: "score-6", stub: true },
+];
+
 const COMMANDS = [
   { cmd: "!тг", text: "Телеграм «Голоса в голове MellShera»" },
   { cmd: "!приватка", text: "Приватный канал" },
@@ -574,27 +583,46 @@ const RULES = [
   "В РАЗРАБОТКЕ",
 ];
 
+const MUSIC_CLIPS = [
+  { id: "ya-spravlyus-sam", title: "Я справлюсь сам", href: "https://www.youtube.com/watch?v=oBfn6vNUwZQ", thumb: "assets/clips/oBfn6vNUwZQ.jpg" },
+  { id: "demony", title: "Демоны", href: "https://www.youtube.com/watch?v=-f_J-9DNlJM", thumb: "assets/clips/-f_J-9DNlJM.jpg" },
+  { id: "snova-sovresh", title: "Снова соврешь", href: "https://www.youtube.com/watch?v=rb-VbgFJ2wo", thumb: "assets/clips/rb-VbgFJ2wo.jpg" },
+  { id: "rozy-zavyali", title: "Розы завяли", href: "https://www.youtube.com/watch?v=IXV-bN8541w", thumb: "assets/clips/IXV-bN8541w.jpg" },
+  { id: "fanera", title: "Фанера", href: "https://www.youtube.com/watch?v=CjaNajMhzx8", thumb: "assets/clips/CjaNajMhzx8.jpg" },
+  { id: "ty-ne-takaya", title: "Ты не такая", href: "https://www.youtube.com/watch?v=HaBcqN820ME", thumb: "assets/clips/HaBcqN820ME.jpg" },
+  { id: "bez-tebya", title: "Без тебя", href: "https://www.youtube.com/watch?v=R5hvdCwMLEA", thumb: "assets/clips/R5hvdCwMLEA.jpg" },
+  { id: "gorodskie", title: "ГОРОДСКИЕ", href: "https://www.youtube.com/watch?v=MmRuabqnVtQ", thumb: "assets/clips/MmRuabqnVtQ.jpg" },
+  { id: "tusa-meduza", title: "ТУСА МЕДУЗА", href: "https://www.youtube.com/watch?v=Mz69bLRpBEs", thumb: "assets/clips/Mz69bLRpBEs.jpg" },
+  { id: "xxl-clip", title: "XXL", href: "https://www.youtube.com/watch?v=-j7rTgFoJBA", thumb: "assets/clips/-j7rTgFoJBA.jpg" },
+  { id: "tonirovanny-zhigul", title: "Тонированный жигуль", href: "https://www.youtube.com/watch?v=-koaQxW5JE4", thumb: "assets/clips/-koaQxW5JE4.jpg" },
+  { id: "kis-kis", title: "Кис-кис", href: "https://www.youtube.com/watch?v=TMrD_1cUExw", thumb: "assets/clips/TMrD_1cUExw.jpg" },
+  { id: "kleopatra", title: "Клеопатра", href: "https://www.youtube.com/watch?v=80XNHJjatSw", thumb: "assets/clips/80XNHJjatSw.jpg" },
+  { id: "long-island", title: "Лонг Айленд", href: "https://www.youtube.com/watch?v=r0nSMphshtg", thumb: "assets/clips/r0nSMphshtg.jpg" },
+  { id: "merci", title: "Мерси", href: "https://www.youtube.com/watch?v=2htkArndqvI", thumb: "assets/clips/2htkArndqvI.jpg" },
+  { id: "hlamidia", title: "Хламидия", href: "https://www.youtube.com/watch?v=LnsH7x6h6zE", thumb: "assets/clips/LnsH7x6h6zE.jpg" },
+];
+
 const CLIPS = [
   {
     id: "pixi",
     title: "Dior Armani — I Love Пикси",
     kicker: "Нарезка",
     href: "https://www.youtube.com/watch?v=hBItKD7Vhpg",
-    thumb: "https://i.ytimg.com/vi/hBItKD7Vhpg/hqdefault.jpg",
+    thumb: "https://i.ytimg.com/vi/hBItKD7Vhpg/mqdefault.jpg",
   },
   {
     id: "slay",
     title: "Разбор номинаций SLAY 2026",
     kicker: "Подкаст",
     href: "https://www.youtube.com/watch?v=rOoBcKbEFBQ",
-    thumb: "https://i.ytimg.com/vi/rOoBcKbEFBQ/hqdefault.jpg",
+    thumb: "https://i.ytimg.com/vi/rOoBcKbEFBQ/mqdefault.jpg",
   },
   {
     id: "mafanya-concert",
     title: "Пятёрка и MellSher дали концерт на стриме Мафани",
     kicker: "Нарезка",
     href: "https://www.youtube.com/watch?v=dLzThnrqYFY",
-    thumb: "https://i.ytimg.com/vi/dLzThnrqYFY/hqdefault.jpg",
+    thumb: "https://i.ytimg.com/vi/dLzThnrqYFY/mqdefault.jpg",
   },
   { id: "soon-4", stub: true },
   { id: "soon-5", stub: true },
