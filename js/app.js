@@ -42,6 +42,21 @@ function streamById(id) {
 function seriesById(id) {
   return SERIES.find((item) => item.id === id);
 }
+function filmById(id) {
+  return FILMS.find((item) => item.id === id);
+}
+function filmsWithReaction() {
+  return FILMS.filter((item) => item.reaction);
+}
+function hasFilmScore(score) {
+  if (score == null || score === "") return false;
+  return !/не\s*помнит/i.test(String(score));
+}
+function filmsScoresOnly() {
+  return FILMS.filter((item) => !item.reaction && !item.stub && hasFilmScore(item.score))
+    .slice()
+    .sort((a, b) => String(b.votedAt || "").localeCompare(String(a.votedAt || "")));
+}
 function releaseById(id) {
   return RELEASES.find((item) => item.id === id);
 }
@@ -143,24 +158,29 @@ function watchCard(item, index) {
   </article>`;
 }
 
-function scrollerRow(html) {
-  return `<div class="scroller-wrap">
+function scrollerRow(html, kind = "") {
+  const cls = ["scroller", kind].filter(Boolean).join(" ");
+  return `<div class="scroller-wrap${kind ? ` is-${kind}` : ""}">
     <button type="button" class="scroller-nav prev" data-scroll="-1" aria-label="Назад">‹</button>
-    <div class="scroller">${html}</div>
+    <div class="${cls}">${html}</div>
     <button type="button" class="scroller-nav next" data-scroll="1" aria-label="Вперёд">›</button>
   </div>`;
 }
 
 function bindScrollers(root = document) {
   $$(".scroller-wrap", root).forEach((wrap) => {
+    if (wrap.dataset.bound === "1") return;
+    wrap.dataset.bound = "1";
     const scroller = $(".scroller", wrap);
     if (!scroller) return;
     wrap.addEventListener("click", (event) => {
       const btn = event.target.closest("[data-scroll]");
       if (!btn || !wrap.contains(btn)) return;
+      event.preventDefault();
       const dir = Number(btn.dataset.scroll) || 1;
-      const step = Math.max(scroller.clientWidth * 0.8, 220);
-      scroller.scrollBy({ left: dir * step, behavior: "smooth" });
+      const card = scroller.querySelector(".card, .film-card, .film");
+      const step = card ? card.getBoundingClientRect().width + 14 : Math.max(scroller.clientWidth * 0.8, 220);
+      scroller.scrollBy({ left: dir * step * 2, behavior: "smooth" });
     });
   });
 }
@@ -295,7 +315,10 @@ function bindChrome() {
       ...series.map((item) => `<a href="series.html?id=${esc(item.id)}"><b>${esc(item.title)}</b><small>Сериал шоу</small></a>`),
       ...merch.map((item) => `<a href="${esc(item.href)}" target="_blank" rel="noopener noreferrer"><b>${esc(item.title)}</b><small>Мерч</small></a>`),
       ...releases.map((item) => `<a href="music.html#${esc(item.id)}"><b>${esc(item.title)}</b><small>${esc(item.kind)}</small></a>`),
-      ...films.map((item) => `<a href="films.html#${esc(item.id)}"><b>${esc(item.title)}</b><small>Фильм · ${esc(item.score)}</small></a>`),
+      ...films.map((item) => {
+        const href = item.text || item.reaction ? `film.html?id=${esc(item.id)}` : `films.html#${esc(item.id)}`;
+        return `<a href="${href}"><b>${esc(item.title)}</b><small>Фильм · ${esc(item.score)}</small></a>`;
+      }),
     ];
     pop.innerHTML = rows.join("") || `<div class="search-empty">Ничего не нашлось</div>`;
     pop.classList.add("show");
@@ -369,31 +392,42 @@ function bindActions(root = document) {
 }
 
 function filmScore(value) {
-  const n = Number(String(value).replace(",", "."));
+  const raw = String(value ?? "").trim();
+  if (!raw || /не\s*помнит/i.test(raw)) return `<b>—</b>`;
+  const n = Number(raw.replace(",", "."));
   if (Number.isFinite(n)) return `<b><i style="color:var(--star)">★</i> ${n.toFixed(1)}</b>`;
-  return `<b>${esc(value)}</b>`;
+  return `<b>${esc(raw)}</b>`;
 }
 
 function filmCard(item) {
   if (item.stub) {
-    return `<article class="film stub has-poster score-only">
-      <div class="film-poster stub-film"></div>
-      <div class="film-body">
+    return `<article class="card clip-card film-card score-only stub">
+      <div class="poster stub-poster"><span class="poster-title">Скоро</span></div>
+      <div class="card-body">
         <h3>Скоро</h3>
-        <div class="film-scores"><span>MellSher —</span><span>Кинопоиск —</span></div>
+        <div class="film-scores"><span>MellSher <b>—</b></span><span>Кинопоиск <b>—</b></span></div>
       </div>
     </article>`;
   }
+  const open = item.reaction || item.text;
+  const title = item.short || item.title;
+  const href = open ? `film.html?id=${esc(item.id)}` : "";
   const poster = item.image
-    ? `<div class="film-poster"><img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy"></div>`
+    ? `<img src="${esc(item.image)}" alt="" loading="lazy">`
     : "";
-  return `<article class="film${item.image ? " has-poster" : ""}" id="${esc(item.id)}">
-    ${poster}
-    <div class="film-body">
-      <h3>${esc(item.title)}</h3>
-      <div class="film-scores"><span>MellSher ${filmScore(item.score)}</span><span>Кинопоиск ${filmScore(item.kp)}</span></div>
+  const inner = `
+    <div class="poster thumb film-thumb">
+      ${poster}
+      ${href ? `<span class="poster-link" aria-hidden="true"></span>` : ""}
     </div>
-  </article>`;
+    <div class="card-body">
+      <h3 title="${esc(item.title)}">${esc(title)}</h3>
+      <div class="film-scores"><span>MellSher ${filmScore(item.score)}</span><span>Кинопоиск ${filmScore(item.kp)}</span></div>
+    </div>`;
+  if (href) {
+    return `<a class="card clip-card film-card is-link" id="${esc(item.id)}" href="${href}">${inner}</a>`;
+  }
+  return `<article class="card clip-card film-card score-only" id="${esc(item.id)}">${inner}</article>`;
 }
 
 function tourCards() {
@@ -443,12 +477,12 @@ function renderHome() {
         <div class="film-strip">
           <h3 class="strip-title">С реакциями</h3>
           <p class="lede">Оценки MellSher рядом с оценкой Кинопоиска.</p>
-          <div class="film-grid">${FILMS.slice(0, 7).map(filmCard).join("")}</div>
+          ${scrollerRow(filmsWithReaction().map(filmCard).join(""))}
         </div>
         <div class="film-strip">
           <h3 class="strip-title">Только оценки</h3>
-          <p class="lede">Короткие оценки без разборов — пока заглушки.</p>
-          <div class="film-grid">${FILM_SCORES.map(filmCard).join("")}</div>
+          <p class="lede">Фильмы без реакции — пока только оценки.</p>
+          ${scrollerRow(filmsScoresOnly().map(filmCard).join(""))}
         </div>
         <div class="center"><a class="pill" href="films.html">Все рецензии</a></div>
       </section>
@@ -783,15 +817,72 @@ function renderFilms() {
       <h1 class="page-title">Рецензии фильмов</h1>
       <div class="film-strip">
         <h2 class="block-title">С реакциями</h2>
-        <p class="lede">Что MellSher уже смотрел: его оценка и оценка Кинопоиска. Если оценки нет, в карточке остаётся его реакция.</p>
-        <div class="film-grid">${FILMS.map(filmCard).join("")}</div>
+        <p class="lede">Что MellSher уже смотрел: его оценка и оценка Кинопоиска. Нажми на карточку — откроется страница с описанием и реакцией.</p>
+        ${scrollerRow(filmsWithReaction().map(filmCard).join(""))}
       </div>
       <div class="film-strip">
         <h2 class="block-title">Только оценки</h2>
-        <p class="lede">Короткие оценки без разборов — пока заглушки.</p>
-        <div class="film-grid">${FILM_SCORES.map(filmCard).join("")}</div>
+        <p class="lede">Фильмы без реакции — только оценки MellSher и Кинопоиска.</p>
+        ${scrollerRow(filmsScoresOnly().map(filmCard).join(""))}
       </div>
     </div>`;
+  bindScrollers($("#page"));
+}
+
+function renderFilm() {
+  const id = new URLSearchParams(location.search).get("id");
+  const item = id ? filmById(id) : null;
+  if (!item || !(item.text || item.reaction)) {
+    $("#page").innerHTML = `<div class="wrap page"><h1 class="page-title">Фильм не найден</h1><p class="lede"><a class="text-link" href="films.html">Ко всем рецензиям</a></p></div>`;
+    return;
+  }
+  document.title = `${item.title} — MellSher`;
+  const related = FILMS.filter((other) => other.id !== item.id && (other.text || other.reaction)).slice(0, 4);
+  const more = related.length
+    ? related
+    : FILMS.filter((other) => other.id !== item.id && !other.stub).slice(0, 4);
+  const poster = item.image
+    ? `<div class="film-hero-poster"><img src="${esc(item.image)}" alt="${esc(item.title)}"></div>`
+    : `<div class="film-hero-poster stub"><strong>${esc(item.title)}</strong></div>`;
+  $("#page").innerHTML = `
+    <section class="film-hero ${item.image ? "has-bg" : ""}" ${item.image ? `style="--film-bg:url('${esc(item.image)}')"` : ""}>
+      <div class="film-hero-shade"></div>
+      <div class="wrap film-hero-grid">
+        ${poster}
+        <div class="film-hero-copy">
+          <p class="kicker"><a href="films.html">Фильмы</a> · реакция MellSher${item.year ? ` · ${item.year}` : ""}</p>
+          <h1 class="page-title">${esc(item.title)}</h1>
+          ${item.genre ? `<p class="film-genre">${esc(item.genre)}</p>` : ""}
+          <div class="score-cards">
+            <div class="score-card">
+              <span>MellSher</span>
+              <strong>${filmScore(item.score)}</strong>
+            </div>
+            <div class="score-card">
+              <span>Кинопоиск</span>
+              <strong>${filmScore(item.kp)}</strong>
+            </div>
+          </div>
+          <div class="actions">
+            ${item.reaction
+              ? `<a class="btn pink" href="${esc(item.reaction)}" target="_blank" rel="noopener noreferrer">▶ Смотреть реакцию</a>`
+              : `<span class="btn disabled">Реакции нет</span>`}
+            <a class="btn" href="films.html">Все фильмы</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="wrap page film-page">
+      <section class="film-panel">
+        <h2 class="strip-title">О фильме</h2>
+        <p>${esc(item.text || "Описание скоро появится.")}</p>
+      </section>
+      <section class="section">
+        ${sectionTitle("Ещё фильмы", "films.html", "Все рецензии")}
+        ${scrollerRow(more.map(filmCard).join(""))}
+      </section>
+    </div>`;
+  bindScrollers($("#page"));
 }
 
 const pages = {
@@ -802,6 +893,7 @@ const pages = {
   music: renderMusic,
   for: renderFor,
   films: renderFilms,
+  film: renderFilm,
 };
 
 const page = document.body.dataset.page;
