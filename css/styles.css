@@ -768,6 +768,78 @@ h1, h2, h3, h4 { font-family: Unbounded, Manrope, sans-serif; font-weight: 700; 
   text-transform: uppercase;
 }
 .release.stub { opacity: 0.92; }
+.merch-card {
+  background:
+    radial-gradient(120% 80% at 0% 0%, rgba(245, 197, 24, 0.14), transparent 55%),
+    #141210;
+  border-color: rgba(245, 197, 24, 0.28);
+}
+.merch-card .release-badge {
+  background: #f5c518;
+  color: #111;
+}
+
+.links-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.link-card {
+  position: relative;
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  height: 68px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: #121212;
+  color: inherit;
+  text-decoration: none;
+  overflow: hidden;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.link-card:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-1px);
+}
+.link-card strong {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.link-card > span:not(.link-badge) {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.link-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: #f5c518;
+  color: #111;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+.link-card.warn {
+  background:
+    radial-gradient(120% 80% at 100% 0%, rgba(245, 197, 24, 0.12), transparent 50%),
+    #141210;
+  border-color: rgba(245, 197, 24, 0.28);
+}
 
 .film-grid {
   display: grid;
@@ -1177,6 +1249,9 @@ h1, h2, h3, h4 { font-family: Unbounded, Manrope, sans-serif; font-weight: 700; 
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 10px;
   }
+  .links-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
   .music-lead {
     min-height: 240px;
     padding: 20px;
@@ -1268,6 +1343,16 @@ h1, h2, h3, h4 { font-family: Unbounded, Manrope, sans-serif; font-weight: 700; 
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
   }
+  .links-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .link-card {
+    height: 60px;
+    padding: 10px 12px;
+  }
+  .link-card strong { font-size: 13px; }
+  .link-badge { top: 6px; right: 6px; font-size: 7px; max-width: 46%; }
   .release { border-radius: 14px; }
   .release-body { padding: 8px 10px 10px; gap: 4px; }
   .release h3 { font-size: 13px; }

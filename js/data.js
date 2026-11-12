@@ -4,7 +4,28 @@ const SITE = {
   telegram: "https://t.me/mellsher",
   youtube: "https://www.youtube.com/channel/UC-jvQ8iQYbdyW_biKdxp55Q",
   music: "https://music.yandex.ru/artist/13963001",
+  merch: "https://kapusta.shop",
+  private: "https://boosty.to/mellsher",
+  tiktok: "https://www.tiktok.com/@mellsherrr",
+  instagram: "https://www.instagram.com/mellsherrr/",
+  discord: "https://discord.gg/UsfMCsdfNm",
+  donate: "https://www.donationalerts.com/r/mellsher",
+  vk: "https://vk.com/mellshermuz",
 };
+
+const LINKS = [
+  { id: "telegram", title: "Telegram", text: "Анонсы и клипы", href: SITE.telegram },
+  { id: "private", title: "Приватка", text: "Boosty", href: SITE.private },
+  { id: "merch", title: "Мерч", text: "временно не работает", href: SITE.merch, card: "warn" },
+  { id: "twitch", title: "Twitch", text: "Основной эфир", href: SITE.twitch },
+  { id: "youtube", title: "YouTube", text: "Нарезки", href: SITE.youtube },
+  { id: "music", title: "Музыка", text: "Яндекс Музыка", href: SITE.music },
+  { id: "tiktok", title: "TikTok", text: "Короткие клипы", href: SITE.tiktok },
+  { id: "instagram", title: "Instagram", text: "Фото и сторис", href: SITE.instagram },
+  { id: "discord", title: "Discord", text: "Сервер комьюнити", href: SITE.discord },
+  { id: "donate", title: "Донат", text: "DonationAlerts", href: SITE.donate },
+  { id: "vk", title: "VK", text: "Музыкальная страница", href: SITE.vk },
+];
 
 const TOUR = [
   { date: "13 ноября", weekday: "пятница", city: "Воронеж", href: "https://xxl.tours/" },

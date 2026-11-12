@@ -95,6 +95,15 @@ function fanworkCard(item) {
   </article>`;
 }
 
+function linkCard(item) {
+  const cls = ["link-card", item.card].filter(Boolean).join(" ");
+  return `<a class="${cls}" href="${esc(item.href)}" target="_blank" rel="noopener noreferrer">
+      ${item.badge ? `<span class="link-badge">${esc(item.badge)}</span>` : ""}
+      <strong>${esc(item.title)}</strong>
+      <span>${esc(item.text)}</span>
+    </a>`;
+}
+
 function watchCard(item, index) {
   if (item.stub) {
     return `<article class="card stub">
@@ -187,9 +196,12 @@ function mountChrome(active) {
         <nav aria-label="Мои соцсети">
           <h2>Соцсети</h2>
           <a href="${SITE.telegram}" target="_blank" rel="noopener noreferrer">Telegram</a>
+          <a href="${SITE.private}" target="_blank" rel="noopener noreferrer">Приватка</a>
           <a href="${SITE.twitch}" target="_blank" rel="noopener noreferrer">Twitch</a>
           <a href="${SITE.youtube}" target="_blank" rel="noopener noreferrer">YouTube</a>
           <a href="${SITE.music}" target="_blank" rel="noopener noreferrer">Яндекс Музыка</a>
+          <a href="${SITE.merch}" target="_blank" rel="noopener noreferrer">Мерч · kapusta.shop</a>
+          <a href="index.html#links">Все ссылки</a>
         </nav>
         <nav aria-label="Разделы">
           <h2>На сайте</h2>
@@ -197,6 +209,7 @@ function mountChrome(active) {
           <a href="series.html">Сериалы шоу</a>
           <a href="films.html">Рецензии фильмов</a>
           <a href="index.html#tour">Прощальный тур</a>
+          <a href="index.html#links">Ссылки</a>
         </nav>
       </div>
       <div class="wrap legal"><span>© MellSher</span><span>Фан-сайт зрителей</span></div>
@@ -387,6 +400,10 @@ function renderHome() {
         <p class="lede">Оценки MellSher рядом с оценкой Кинопоиска.</p>
         <div class="film-grid">${FILMS.slice(0, 7).map(filmCard).join("")}</div>
         <div class="center"><a class="pill" href="films.html">Все рецензии</a></div>
+      </section>
+      <section class="section" id="links">
+        ${sectionTitle("Ссылки")}
+        <div class="links-grid">${LINKS.map(linkCard).join("")}</div>
       </section>
       <section class="section" id="fans">
         ${sectionTitle("Творчество подписчиков")}
@@ -696,6 +713,7 @@ function renderFor() {
           <a class="release" href="${SITE.telegram}" target="_blank" rel="noopener noreferrer"><h3>Telegram</h3><p>«Голоса в голове MellShera» — анонсы, клипы и переносы, если сетка сдвинулась.</p><span class="btn">Открыть</span></a>
           <a class="release" href="${SITE.youtube}" target="_blank" rel="noopener noreferrer"><h3>YouTube</h3><p>Нарезки и длинные ролики — то, что уходит с эфира в постоянный архив.</p><span class="btn">Открыть</span></a>
           <a class="release" href="index.html#tour"><h3>Тур</h3><p>Ближайшие площадки прощального тура с 5opka. В зале телефон лучше поднять на XXL, а не на правила чата.</p><span class="btn">Даты</span></a>
+          <a class="release merch-card" href="${SITE.merch}" target="_blank" rel="noopener noreferrer"><span class="release-badge">временно не работает</span><h3>Мерч</h3><p>Магазин kapusta.shop — худи, футболки и остальной мерч. Сейчас сайт недоступен.</p><span class="btn">Открыть</span></a>
         </div>
       </section>
     </div>`;
