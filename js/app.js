@@ -121,11 +121,14 @@ function linkCard(item) {
 }
 
 function merchCard(item) {
+  const sold = item.soldOut ? `<span class="merch-sold">Sold out</span>` : "";
   return `<a class="merch-item" href="${esc(item.href)}" target="_blank" rel="noopener noreferrer">
       <div class="merch-photo"><img src="${esc(item.image)}" alt="${esc(item.title)}"></div>
       <div class="merch-body">
         <strong>${esc(item.title)}</strong>
-        <span>${esc(item.text)}</span>
+        <div class="merch-meta">
+          <span class="merch-price">${esc(item.text)}</span>${sold}
+        </div>
       </div>
     </a>`;
 }
@@ -143,16 +146,13 @@ function watchCard(item, index) {
       </div>
     </article>`;
   }
-  const label = index ? `${index}. ${item.title}` : item.title;
-  const kicker = item.kicker || item.school || "";
   return `<article class="card clip-card">
     <div class="poster thumb">
       <img src="${esc(item.thumb)}" alt="" loading="lazy">
       <a class="poster-link" href="${esc(item.href)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(item.title)}"></a>
-      ${kicker ? `<span class="poster-kicker">${esc(kicker)}</span>` : ""}
     </div>
     <div class="card-body">
-      <h3><a href="${esc(item.href)}" target="_blank" rel="noopener noreferrer">${esc(label)}</a></h3>
+      <h3><a href="${esc(item.href)}" target="_blank" rel="noopener noreferrer">${esc(item.title)}</a></h3>
       <a class="btn pink" href="${esc(item.href)}" target="_blank" rel="noopener noreferrer">▶ Смотреть</a>
     </div>
   </article>`;
@@ -432,20 +432,19 @@ function filmCard(item) {
 
 function tourCards() {
   return TOUR.map((show) => `<a class="tour-card" href="${esc(show.href)}" target="_blank" rel="noopener noreferrer">
-    <span class="when">${esc(show.date)} · ${esc(show.weekday)}</span>
-    <strong>${esc(show.city)}</strong>
-    <em>Билеты →</em>
+    <span class="tour-main">
+      <span class="tour-date">${esc(show.date)}</span>
+      <strong class="tour-city">${esc(show.city)}</strong>
+    </span>
+    <span class="tour-btn"><span>→</span> Билеты</span>
   </a>`).join("");
 }
 
 function renderHome() {
-  const next = TOUR[0];
-
   $("#page").innerHTML = `
     <section class="hero">
       <img src="assets/hero.png" alt="MellSher с микрофоном на сцене" />
       <div class="hero-shade"></div>
-      <a class="hero-chip" href="#tour"><span class="dot"></span><span>${esc(next.date)} · <b>${esc(next.city)}</b></span></a>
       <h1 class="hero-title">MELLSHER</h1>
       <button class="scroll-cue" type="button" data-down>Крутите вниз</button>
     </section>

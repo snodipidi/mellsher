@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@500;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@500;700;800;900&display=swap");
 
 :root {
   --bg: #080808;
@@ -81,7 +81,7 @@ h1, h2, h3, h4 { font-family: Unbounded, Manrope, sans-serif; font-weight: 700; 
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: #1a1a1a url("../assets/hero.png") center 20% / cover;
+  background: #1a1a1a url("../assets/brand.png") center 18% / cover;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 .nav {
@@ -293,17 +293,30 @@ h1, h2, h3, h4 { font-family: Unbounded, Manrope, sans-serif; font-weight: 700; 
   left: 28px;
   top: calc(var(--header) + 18px);
   display: flex;
-  gap: 10px;
+  gap: 14px;
   align-items: center;
-  padding: 10px 14px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 10px 12px;
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   backdrop-filter: blur(8px);
-  font-size: 13px;
-  font-weight: 700;
 }
-.hero-chip b { color: #fff; font-weight: 800; }
+.hero-chip .tour-date {
+  font-size: 22px;
+}
+.hero-chip .tour-city {
+  font-size: 22px;
+  white-space: nowrap;
+}
+.hero-chip .tour-btn {
+  min-height: 30px;
+  padding: 0 12px;
+  font-size: 14px;
+}
+.hero-chip:hover .tour-btn {
+  background: #fff;
+  color: #000;
+}
 .dot {
   width: 8px;
   height: 8px;
@@ -393,25 +406,72 @@ h1, h2, h3, h4 { font-family: Unbounded, Manrope, sans-serif; font-weight: 700; 
 
 .tour-row {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 28px;
 }
 .tour-card {
-  background: linear-gradient(180deg, #1a1216, #121212);
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  padding: 18px 18px 16px;
-  min-height: 148px;
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-width: 0;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  color: inherit;
+  transition: opacity 0.15s ease;
 }
-.tour-card:hover { transform: translateY(-3px); border-color: rgba(255, 59, 107, 0.45); }
-.tour-card .when { color: var(--pink); font-weight: 800; font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; }
-.tour-card strong { font-family: Unbounded, sans-serif; font-size: 22px; letter-spacing: -0.04em; }
-.tour-card span { color: var(--muted); font-size: 14px; }
-.tour-card em { margin-top: auto; font-style: normal; font-weight: 700; font-size: 13px; }
+.tour-card:hover { opacity: 0.88; }
+.tour-card:hover .tour-btn {
+  background: #fff;
+  color: #000;
+}
+.tour-main {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  min-width: 0;
+}
+.tour-date {
+  flex: 0 0 auto;
+  color: #e84a1f;
+  font-family: "Bebas Neue", Unbounded, sans-serif;
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+.tour-city {
+  margin: 0;
+  min-width: 0;
+  color: #fff;
+  font-family: "Bebas Neue", Unbounded, sans-serif;
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tour-btn {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 0 14px;
+  border: 1px solid #fff;
+  border-radius: 0;
+  background: transparent;
+  color: #fff;
+  font-family: "Bebas Neue", Unbounded, sans-serif;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.tour-btn span { font-size: 14px; line-height: 1; }
 
 .scroller-wrap {
   position: relative;
@@ -481,7 +541,22 @@ h1, h2, h3, h4 { font-family: Unbounded, Manrope, sans-serif; font-weight: 700; 
 }
 .clip-card .card-body {
   flex: 1;
+  display: flex;
+  flex-direction: column;
   align-content: start;
+}
+.clip-card:not(.film-card) .card-body {
+  text-align: center;
+  align-items: stretch;
+}
+.clip-card:not(.film-card) h3 {
+  text-align: center;
+  flex: 1;
+  min-height: 3.9em;
+}
+.clip-card:not(.film-card) .card-body > .btn {
+  margin-top: auto;
+  width: 100%;
 }
 .clip-card .poster.thumb {
   border-radius: 22px 22px 0 0;
@@ -930,18 +1005,34 @@ h1, h2, h3, h4 { font-family: Unbounded, Manrope, sans-serif; font-weight: 700; 
 }
 .merch-body {
   display: grid;
-  gap: 2px;
+  gap: 6px;
   padding: 12px 14px 14px;
 }
 .merch-body strong {
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: -0.02em;
-  line-height: 1.25;
+  line-height: 1.3;
+  color: #fff;
 }
-.merch-body span {
-  color: var(--muted);
+.merch-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+}
+.merch-price {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.merch-sold {
+  color: #cc4b4b;
   font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
 }
 
 .links-grid {
@@ -1722,16 +1813,21 @@ h1, h2, h3, h4 { font-family: Unbounded, Manrope, sans-serif; font-weight: 700; 
   }
   .poster-title { font-size: 20px; }
   .card-body { padding: 8px 10px 10px; gap: 6px; }
-  .card h3 { font-size: 13px; min-height: 0; }
+  .card h3 { font-size: 13px; }
+  .clip-card:not(.film-card) h3 { min-height: 3.9em; }
   .tour-row {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 0;
   }
-  .tour-card {
-    min-height: 0;
-    padding: 14px;
+  .tour-card { padding: 12px 0; }
+  .tour-main { gap: 12px; }
+  .tour-date,
+  .tour-city { font-size: 20px; }
+  .tour-btn {
+    min-height: 32px;
+    padding: 0 12px;
+    font-size: 14px;
   }
-  .tour-card strong { font-size: 18px; }
   .release-grid,
   .music-grid,
   .catalog {
@@ -1751,9 +1847,11 @@ h1, h2, h3, h4 { font-family: Unbounded, Manrope, sans-serif; font-weight: 700; 
     gap: 8px;
   }
   .merch-item { border-radius: 12px; }
-  .merch-body { padding: 8px 10px 10px; }
+  .merch-body { padding: 8px 10px 10px; gap: 4px; }
   .merch-body strong { font-size: 12px; }
-  .merch-body span { font-size: 11px; }
+  .merch-price { font-size: 14px; }
+  .merch-sold { font-size: 11px; }
+  .merch-meta { gap: 6px; }
   .link-card {
     height: 60px;
     padding: 10px 12px;
