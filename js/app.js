@@ -301,9 +301,15 @@ function filmScore(value) {
 }
 
 function filmCard(item) {
-  return `<article class="film" id="${esc(item.id)}">
-    <h3>${esc(item.title)}</h3>
-    <div class="film-scores"><span>MellSher ${filmScore(item.score)}</span><span>Кинопоиск ${filmScore(item.kp)}</span></div>
+  const poster = item.image
+    ? `<div class="film-poster"><img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy"></div>`
+    : "";
+  return `<article class="film${item.image ? " has-poster" : ""}" id="${esc(item.id)}">
+    ${poster}
+    <div class="film-body">
+      <h3>${esc(item.title)}</h3>
+      <div class="film-scores"><span>MellSher ${filmScore(item.score)}</span><span>Кинопоиск ${filmScore(item.kp)}</span></div>
+    </div>
   </article>`;
 }
 
@@ -346,7 +352,7 @@ function renderHome() {
       <section class="section">
         ${sectionTitle("Релизы", "music.html")}
         <div class="release-grid">
-          ${RELEASES.filter((item) => !item.stub).slice(0, 3).map((item) => releaseCard(item, { teaser: true })).join("")}
+          ${RELEASES.filter((item) => !item.stub).slice(0, 5).map((item) => releaseCard(item, { teaser: true })).join("")}
         </div>
       </section>
       <section class="section" id="films">
@@ -561,23 +567,44 @@ function releaseCard(item, { teaser = false } = {}) {
   </article>`;
 }
 
+function trackIsSolo(item) {
+  return /сольн/i.test(item.kind || "");
+}
+
+function sortTracks(tracks, mode = "solo") {
+  const ranked = tracks.map((item, index) => ({ item, index }));
+  const byNew = (a, b) => (b.item.year || 0) - (a.item.year || 0) || a.index - b.index;
+  const byOld = (a, b) => (a.item.year || 0) - (b.item.year || 0) || b.index - a.index;
+  const bySolo = (a, b) => Number(trackIsSolo(b.item)) - Number(trackIsSolo(a.item)) || byNew(a, b);
+  const byFeat = (a, b) => Number(trackIsSolo(a.item)) - Number(trackIsSolo(b.item)) || byNew(a, b);
+  const sorter = { solo: bySolo, new: byNew, old: byOld, feat: byFeat }[mode] || bySolo;
+  return ranked.sort(sorter).map(({ item }) => item);
+}
+
+function renderTrackGrid(mode = "solo") {
+  const tracks = sortTracks(RELEASES.filter((item) => item.type === "track"), mode);
+  const grid = $("[data-tracks-grid]");
+  if (!grid) return;
+  grid.innerHTML = tracks.map((item) => releaseCard(item)).join("");
+}
+
 function renderMusic() {
   const albums = RELEASES.filter((item) => item.type === "album");
-  const tracks = RELEASES.filter((item) => item.type === "track");
-  const lead = RELEASES.find((item) => item.id === "hm3") || albums[0];
   $("#page").innerHTML = `
     <div class="wrap page">
       <div class="music-hero">
-        <div class="music-lead"${lead.cover ? ` style="--cover:url('${esc(lead.cover)}')"` : ""}>
-          <span class="kicker">${esc(lead.badge || "Музыка")}</span>
-          <h2>${esc(lead.title)}</h2>
-          <p>${esc(lead.text.split(". ").slice(0, 2).join(". ") + ".")}</p>
-          <a class="btn pink" href="${esc(lead.href)}" target="_blank" rel="noopener noreferrer">Слушать HEAVY METAL 3</a>
+        <div class="music-lead has-live">
+          <div class="music-lead-copy">
+            <span class="kicker">Музыка</span>
+            <h2>Релизы MellSher</h2>
+            <p>Сольники и совместные треки с 5opka — свежие релизы и то, что уже успело осесть в плейлистах.</p>
+            <a class="btn pink" href="#albums">К релизам</a>
+          </div>
         </div>
         <div class="stack">
           <article class="panel">
-            <h3>Альбомы и треки</h3>
-            <p>Совместные релизы с 5opka и сольные вещи MellSher. Свежие релизы сверху, дальше — полка поглубже.</p>
+            <h3>Он умеет петь?</h3>
+            <p>Да, ниже - различные треки и альбомы Игоря. Свежие релизы сверху, дальше - полка поглубже.</p>
             <a class="btn" href="${SITE.music}" target="_blank" rel="noopener noreferrer">Яндекс Музыка</a>
           </article>
           <article class="panel">
@@ -594,12 +621,25 @@ function renderMusic() {
         </div>
       </section>
       <section class="section" id="tracks">
-        ${sectionTitle("Треки")}
-        <div class="music-grid tracks-grid">
-          ${tracks.map(releaseCard).join("")}
+        <div class="section-head">
+          <h2>Треки</h2>
+          <label class="track-sort">
+            <span>Сортировка</span>
+            <select data-track-sort>
+              <option value="solo" selected>Сначала сольные</option>
+              <option value="new">Сначала новые</option>
+              <option value="old">Сначала старые</option>
+              <option value="feat">Сначала фиты</option>
+            </select>
+          </label>
         </div>
+        <div class="music-grid tracks-grid" data-tracks-grid></div>
       </section>
     </div>`;
+  renderTrackGrid("solo");
+  $("[data-track-sort]").addEventListener("change", (event) => {
+    renderTrackGrid(event.target.value);
+  });
 }
 
 function renderFor() {
