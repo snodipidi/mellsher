@@ -79,7 +79,7 @@ function card(item, index) {
     <div class="card-body">
       <h3><a href="stream.html?id=${esc(item.id)}">${esc(title)}</a></h3>
       <a class="btn" href="stream.html?id=${esc(item.id)}">+ Открыть</a>
-      <a class="btn" href="${esc(item.watch)}" target="_blank" rel="noopener noreferrer">▶ Смотреть</a>
+      <a class="btn" href="${esc(item.watch)}" target="_blank" rel="noopener noreferrer">Смотреть</a>
     </div>
   </article>`;
 }
@@ -153,7 +153,7 @@ function watchCard(item, index) {
     </div>
     <div class="card-body">
       <h3><a href="${esc(item.href)}" target="_blank" rel="noopener noreferrer">${esc(item.title)}</a></h3>
-      <a class="btn pink" href="${esc(item.href)}" target="_blank" rel="noopener noreferrer">▶ Смотреть</a>
+      <a class="btn pink" href="${esc(item.href)}" target="_blank" rel="noopener noreferrer">Смотреть</a>
     </div>
   </article>`;
 }
@@ -585,7 +585,7 @@ function renderStream() {
           <h1 class="page-title">${esc(item.title)}</h1>
           <p class="lede">${esc(item.text)}</p>
           <div class="actions">
-            <a class="btn pink" href="${esc(item.watch)}" target="_blank" rel="noopener noreferrer">▶ Смотреть</a>
+            <a class="btn pink" href="${esc(item.watch)}" target="_blank" rel="noopener noreferrer">Смотреть</a>
             <button class="btn" type="button" data-save="${esc(item.id)}">${saved ? "В списке" : "+ Буду смотреть"}</button>
           </div>
         </div>
@@ -864,7 +864,7 @@ function renderFilm() {
           </div>
           <div class="actions">
             ${item.reaction
-              ? `<a class="btn pink" href="${esc(item.reaction)}" target="_blank" rel="noopener noreferrer">▶ Смотреть реакцию</a>`
+              ? `<a class="btn pink" href="${esc(item.reaction)}" target="_blank" rel="noopener noreferrer">Смотреть реакцию</a>`
               : `<span class="btn disabled">Реакции нет</span>`}
             <a class="btn" href="films.html">Все фильмы</a>
           </div>
