@@ -4,7 +4,7 @@ const SITE = {
   telegram: "https://t.me/mellsher",
   youtube: "https://www.youtube.com/channel/UC-jvQ8iQYbdyW_biKdxp55Q",
   music: "https://music.yandex.ru/artist/13963001",
-  merch: "https://kapusta.shop",
+  merch: "https://kapusta.shop/5opkaMellsher",
   private: "https://boosty.to/mellsher",
   tiktok: "https://www.tiktok.com/@mellsherrr",
   instagram: "https://www.instagram.com/mellsherrr/",
@@ -13,10 +13,62 @@ const SITE = {
   vk: "https://vk.com/mellshermuz",
 };
 
+const MERCH = [
+  {
+    id: "zip-khudi",
+    title: "Зип-худи MellSher",
+    text: "Худи на молнии",
+    image: "assets/merch/zip-khudi.jpg",
+    href: "https://kapusta.shop/5opkaMellsher/zip-khudi-mellsher",
+  },
+  {
+    id: "futbolka-neudachnik",
+    title: "Футболка «Неудачник»",
+    text: "Оверсайз",
+    image: "assets/merch/futbolka-neudachnik.jpg",
+    href: "https://kapusta.shop/5opkaMellsher/futbolka-neudachnik",
+  },
+  {
+    id: "futbolka-kh",
+    title: "Футболка «Х»",
+    text: "Оверсайз",
+    image: "assets/merch/futbolka-kh.jpg",
+    href: "https://kapusta.shop/5opkaMellsher/futbolka-kh",
+  },
+  {
+    id: "futbolka-mne-khorosho",
+    title: "Футболка «Мне хорошо»",
+    text: "Оверсайз",
+    image: "assets/merch/futbolka-mne-khorosho.jpg",
+    href: "https://kapusta.shop/5opkaMellsher/futbolka-mne-khorosho",
+  },
+  {
+    id: "futbolka-angel-1",
+    title: "Футболка «Ангел»",
+    text: "Чёрная",
+    image: "assets/merch/futbolka-angel-1.jpg",
+    href: "https://kapusta.shop/5opkaMellsher/futbolka-angel-1",
+  },
+  {
+    id: "futbolka-angel",
+    title: "Футболка «Ангел»",
+    text: "Белая",
+    image: "assets/merch/futbolka-angel.png",
+    href: "https://kapusta.shop/5opkaMellsher/futbolka-angel",
+  },
+  {
+    id: "futbolka-etapy",
+    title: "Футболка «Этапы»",
+    text: "Этапы идеальных разрушений",
+    image: "assets/merch/futbolka-etapy.jpg",
+    href: "https://kapusta.shop/5opkaMellsher/futbolka-etapy-idealnykh-razrusheniy",
+  },
+];
+
 const LINKS = [
   { id: "telegram", title: "Telegram", text: "Анонсы и клипы", href: SITE.telegram },
   { id: "private", title: "Приватка", text: "Boosty", href: SITE.private },
-  { id: "merch", title: "Мерч", text: "временно не работает", href: SITE.merch, card: "warn" },
+  { id: "merch", title: "Мерч", text: "kapusta.shop", href: SITE.merch },
   { id: "twitch", title: "Twitch", text: "Основной эфир", href: SITE.twitch },
   { id: "youtube", title: "YouTube", text: "Нарезки", href: SITE.youtube },
   { id: "music", title: "Музыка", text: "Яндекс Музыка", href: SITE.music },
@@ -225,35 +277,7 @@ const STREAMS = [
 ];
 
 const SERIES = [
-  {
-    id: "shgsh",
-    title: "ШГШ",
-    year: 2025,
-    meta: "веб-сериал",
-    age: "16+",
-    image: "assets/shgsh.png",
-    c1: "#2a3a18",
-    c2: "#0c1208",
-    text: "ШГШ («Школа глазами школьника») — подростковый веб-сериал Руслана Гладенко. Камера смотрит глазами Димы: школа, дружба, первая любовь и всё, что обычно остаётся между уроками. MellSher смотрит серии в реакциях — ниже два плейлиста нарезок.",
-    links: [
-      { label: "Нарезки норвича", href: "https://www.youtube.com/playlist?list=PLLXvMYLXzBWQ" },
-      { label: "Дуо нарезки", href: "https://www.youtube.com/playlist?list=PLOUTLTOQZIIhMce13iEAxXsNf1HTn_ec3" },
-    ],
-  },
-  {
-    id: "dnd",
-    title: "ДнД",
-    year: 2025,
-    meta: "настольная RPG",
-    age: "16+",
-    image: "assets/dnd.jpg",
-    c1: "#3a2410",
-    c2: "#120a04",
-    text: "Dungeons & Dragons («Подземелья и драконы») — самая известная в мире настольная ролевая игра в жанре фэнтези. Ниже — нарезки эфиров MellSher по кампании.",
-    links: [
-      { label: "Смотреть нарезки", href: "https://www.youtube.com/watch?v=FMytgVnq2FI&list=PL9erYytoX53FfMZF62atkAYArt_7bbz8z" },
-    ],
-  },
+  { id: "soon-1", stub: true, c1: "#1c1c1c", c2: "#0b0b0b" },
   { id: "soon-2", stub: true, c1: "#1c1c1c", c2: "#0b0b0b" },
   { id: "soon-3", stub: true, c1: "#1c1c1c", c2: "#0b0b0b" },
 ];

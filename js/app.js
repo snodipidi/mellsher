@@ -104,6 +104,16 @@ function linkCard(item) {
     </a>`;
 }
 
+function merchCard(item) {
+  return `<a class="merch-item" href="${esc(item.href)}" target="_blank" rel="noopener noreferrer">
+      <div class="merch-photo"><img src="${esc(item.image)}" alt="${esc(item.title)}"></div>
+      <div class="merch-body">
+        <strong>${esc(item.title)}</strong>
+        <span>${esc(item.text)}</span>
+      </div>
+    </a>`;
+}
+
 function watchCard(item, index) {
   if (item.stub) {
     return `<article class="card stub">
@@ -209,6 +219,7 @@ function mountChrome(active) {
           <a href="series.html">Сериалы шоу</a>
           <a href="films.html">Рецензии фильмов</a>
           <a href="index.html#tour">Прощальный тур</a>
+          <a href="index.html#merch">Мерч</a>
           <a href="index.html#links">Ссылки</a>
         </nav>
       </div>
@@ -248,18 +259,16 @@ function bindChrome() {
       return;
     }
     const clips = CLIPS.filter((item) => !item.stub && `${item.title} ${item.kicker}`.toLowerCase().includes(q)).slice(0, 4);
-    const reactions = [...REACTIONS, ...NORWICH_REACTIONS]
-      .filter((item) => `${item.title} ${item.school}`.toLowerCase().includes(q))
-      .slice(0, 6);
     const streams = STREAMS.filter((item) => `${item.title} ${item.blurb}`.toLowerCase().includes(q)).slice(0, 4);
     const releases = RELEASES.filter((item) => !item.stub && `${item.title} ${item.kind || ""}`.toLowerCase().includes(q)).slice(0, 3);
-    const series = SERIES.filter((item) => !item.stub && item.title.toLowerCase().includes(q)).slice(0, 3);
+    const series = SERIES.filter((item) => !item.stub && item.title?.toLowerCase().includes(q)).slice(0, 3);
+    const merch = MERCH.filter((item) => `${item.title} ${item.text}`.toLowerCase().includes(q)).slice(0, 3);
     const films = FILMS.filter((item) => item.title.toLowerCase().includes(q)).slice(0, 3);
     const rows = [
       ...clips.map((item) => `<a href="${esc(item.href)}" target="_blank" rel="noopener noreferrer"><b>${esc(item.title)}</b><small>Нарезка</small></a>`),
-      ...reactions.map((item) => `<a href="${esc(item.href)}" target="_blank" rel="noopener noreferrer"><b>${esc(item.title)}</b><small>ШГШ · ${esc(item.school)}</small></a>`),
       ...streams.map((item) => `<a href="stream.html?id=${esc(item.id)}"><b>${esc(item.title)}</b><small>Эфир</small></a>`),
       ...series.map((item) => `<a href="series.html?id=${esc(item.id)}"><b>${esc(item.title)}</b><small>Сериал шоу</small></a>`),
+      ...merch.map((item) => `<a href="${esc(item.href)}" target="_blank" rel="noopener noreferrer"><b>${esc(item.title)}</b><small>Мерч</small></a>`),
       ...releases.map((item) => `<a href="music.html#${esc(item.id)}"><b>${esc(item.title)}</b><small>${esc(item.kind)}</small></a>`),
       ...films.map((item) => `<a href="films.html#${esc(item.id)}"><b>${esc(item.title)}</b><small>Фильм · ${esc(item.score)}</small></a>`),
     ];
@@ -376,6 +385,10 @@ function renderHome() {
       <section class="section" id="tour">
         ${sectionTitle("Прощальный тур", "https://xxl.tours/", "Все даты")}
         <div class="tour-row">${tourCards()}</div>
+      </section>
+      <section class="section" id="merch">
+        ${sectionTitle("Мерч", SITE.merch, "Весь магазин")}
+        <div class="merch-grid">${MERCH.map(merchCard).join("")}</div>
       </section>
       <section class="section" id="clips">
         ${sectionTitle("Топ нарезок", "streams.html")}
@@ -713,7 +726,7 @@ function renderFor() {
           <a class="release" href="${SITE.telegram}" target="_blank" rel="noopener noreferrer"><h3>Telegram</h3><p>«Голоса в голове MellShera» — анонсы, клипы и переносы, если сетка сдвинулась.</p><span class="btn">Открыть</span></a>
           <a class="release" href="${SITE.youtube}" target="_blank" rel="noopener noreferrer"><h3>YouTube</h3><p>Нарезки и длинные ролики — то, что уходит с эфира в постоянный архив.</p><span class="btn">Открыть</span></a>
           <a class="release" href="index.html#tour"><h3>Тур</h3><p>Ближайшие площадки прощального тура с 5opka. В зале телефон лучше поднять на XXL, а не на правила чата.</p><span class="btn">Даты</span></a>
-          <a class="release merch-card" href="${SITE.merch}" target="_blank" rel="noopener noreferrer"><span class="release-badge">временно не работает</span><h3>Мерч</h3><p>Магазин kapusta.shop — худи, футболки и остальной мерч. Сейчас сайт недоступен.</p><span class="btn">Открыть</span></a>
+          <a class="release" href="${SITE.merch}" target="_blank" rel="noopener noreferrer"><h3>Мерч</h3><p>Магазин kapusta.shop — худи, футболки и остальной мерч MellSher.</p><span class="btn">Открыть</span></a>
         </div>
       </section>
     </div>`;
