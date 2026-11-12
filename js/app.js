@@ -69,6 +69,32 @@ function card(item, index) {
   </article>`;
 }
 
+function fanworkCard(item) {
+  const kicker = item.kind === "art" ? "Арт" : "Фан-клип";
+  if (item.stub) {
+    return `<article class="card stub fanwork">
+      <div class="poster stub-poster">
+        <span class="poster-kicker">${esc(kicker)}</span>
+        <span class="poster-title">Скоро</span>
+      </div>
+      <div class="card-body">
+        <h3>${esc(item.title || kicker)}</h3>
+        <span class="btn disabled">Скоро</span>
+      </div>
+    </article>`;
+  }
+  return `<article class="card fanwork">
+    <div class="poster thumb" style="--thumb:url('${esc(item.thumb)}')">
+      <a class="poster-link" href="${esc(item.href)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(item.title)}"></a>
+      <span class="poster-kicker">${esc(kicker)}</span>
+    </div>
+    <div class="card-body">
+      <h3><a href="${esc(item.href)}" target="_blank" rel="noopener noreferrer">${esc(item.title)}</a></h3>
+      <a class="btn pink" href="${esc(item.href)}" target="_blank" rel="noopener noreferrer">Открыть</a>
+    </div>
+  </article>`;
+}
+
 function watchCard(item, index) {
   if (item.stub) {
     return `<article class="card stub">
@@ -162,6 +188,7 @@ function mountChrome(active) {
           <h2>Соцсети</h2>
           <a href="${SITE.telegram}" target="_blank" rel="noopener noreferrer">Telegram</a>
           <a href="${SITE.twitch}" target="_blank" rel="noopener noreferrer">Twitch</a>
+          <a href="${SITE.youtube}" target="_blank" rel="noopener noreferrer">YouTube</a>
           <a href="${SITE.music}" target="_blank" rel="noopener noreferrer">Яндекс Музыка</a>
         </nav>
         <nav aria-label="Разделы">
@@ -358,8 +385,13 @@ function renderHome() {
       <section class="section" id="films">
         ${sectionTitle("Рецензии фильмов", "films.html")}
         <p class="lede">Оценки MellSher рядом с оценкой Кинопоиска.</p>
-        <div class="film-grid">${FILMS.slice(0, 6).map(filmCard).join("")}</div>
+        <div class="film-grid">${FILMS.slice(0, 7).map(filmCard).join("")}</div>
         <div class="center"><a class="pill" href="films.html">Все рецензии</a></div>
+      </section>
+      <section class="section" id="fans">
+        ${sectionTitle("Творчество подписчиков")}
+        <p class="lede">Фан-клипы и арты от комьюнити — пока заглушки, контент появится позже.</p>
+        <div class="scroller">${FANWORKS.map(fanworkCard).join("")}</div>
       </section>
     </div>
     <section class="live wrap" id="live">
@@ -604,8 +636,8 @@ function renderMusic() {
         <div class="stack">
           <article class="panel">
             <h3>Он умеет петь?</h3>
-            <p>Да, ниже - различные треки и альбомы Игоря. Свежие релизы сверху, дальше - полка поглубже.</p>
-            <a class="btn" href="${SITE.music}" target="_blank" rel="noopener noreferrer">Яндекс Музыка</a>
+            <p>Да, ниже - различные треки и альбомы Игоря.</p>
+            <a class="btn yellow" href="${SITE.music}" target="_blank" rel="noopener noreferrer">Яндекс Музыка</a>
           </article>
           <article class="panel">
             <h3>Разгром</h3>
@@ -662,6 +694,7 @@ function renderFor() {
         <div class="release-grid">
           <a class="release" href="${SITE.twitch}" target="_blank" rel="noopener noreferrer"><h3>Twitch</h3><p>Основной эфир: шоу, кукинг и ночной чат. Канал mellsher.</p><span class="btn pink">Открыть</span></a>
           <a class="release" href="${SITE.telegram}" target="_blank" rel="noopener noreferrer"><h3>Telegram</h3><p>«Голоса в голове MellShera» — анонсы, клипы и переносы, если сетка сдвинулась.</p><span class="btn">Открыть</span></a>
+          <a class="release" href="${SITE.youtube}" target="_blank" rel="noopener noreferrer"><h3>YouTube</h3><p>Нарезки и длинные ролики — то, что уходит с эфира в постоянный архив.</p><span class="btn">Открыть</span></a>
           <a class="release" href="index.html#tour"><h3>Тур</h3><p>Ближайшие площадки прощального тура с 5opka. В зале телефон лучше поднять на XXL, а не на правила чата.</p><span class="btn">Даты</span></a>
         </div>
       </section>

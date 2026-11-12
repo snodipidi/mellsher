@@ -523,6 +523,8 @@ h1, h2, h3, h4 { font-family: Unbounded, Manrope, sans-serif; font-weight: 700; 
 .btn:hover { background: #343434; }
 .btn.pink { background: var(--pink); color: #fff; }
 .btn.pink:hover { background: #ff527d; }
+.btn.yellow { background: #ffcc00; color: #111; }
+.btn.yellow:hover { background: #ffd633; }
 .btn.disabled {
   background: transparent;
   border: 1px dashed rgba(255, 255, 255, 0.16);

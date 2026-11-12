@@ -2,6 +2,7 @@ const SITE = {
   name: "MellSher",
   twitch: "https://www.twitch.tv/mellsher",
   telegram: "https://t.me/mellsher",
+  youtube: "https://www.youtube.com/channel/UC-jvQ8iQYbdyW_biKdxp55Q",
   music: "https://music.yandex.ru/artist/13963001",
 };
 
@@ -517,19 +518,15 @@ const FILMS = [
 
 const COMMANDS = [
   { cmd: "!тг", text: "Телеграм «Голоса в голове MellShera»" },
-  { cmd: "!твич", text: "Канал twitch.tv/mellsher" },
-  { cmd: "!тур", text: "Ближайшие даты прощального тура" },
-  { cmd: "!трек", text: "Что сейчас играет, если эфир из студии или зала" },
-  { cmd: "!альбом", text: "Opus и остальная полка релизов" },
-  { cmd: "!клип", text: "Куда уходят нарезки после шоу" },
+  { cmd: "!приватка", text: "Приватный канал" },
+  { cmd: "!тур", text: "Ссылка на сайт тура" },
+  { cmd: "ыыыы", text: "какие команды есть я хз" },
+  { cmd: "анаркинг", text: "В разработке" },
+  { cmd: "67ww", text: "В разработке" },
 ];
 
 const RULES = [
-  "Один человек — один аккаунт в чате. Вторые окна для накрутки шоу улетают сразу.",
-  "Спойлеры чужих шоу и чужие данные не пишем. Формат и так на грани, личное за неё не тащим.",
-  "Голосования в «Бункере», «Крысиных бегах» и «Чате на вылет» решают зрители эфира, не паста из других чатов.",
-  "Музыкальные вопросы — в момент, когда MellSher сам открыл студию. Поверх гостя не орём.",
-  "Модератор прав, пока эфир не закончился. Спорить с баном можно уже в телеграме, не капсом в чате.",
+  "В РАЗРАБОТКЕ",
 ];
 
 const CLIPS = [
@@ -547,10 +544,25 @@ const CLIPS = [
     href: "https://www.youtube.com/watch?v=rOoBcKbEFBQ",
     thumb: "https://i.ytimg.com/vi/rOoBcKbEFBQ/hqdefault.jpg",
   },
-  { id: "soon-3", stub: true },
+  {
+    id: "mafanya-concert",
+    title: "Пятёрка и MellSher дали концерт на стриме Мафани",
+    kicker: "Нарезка",
+    href: "https://www.youtube.com/watch?v=dLzThnrqYFY",
+    thumb: "https://i.ytimg.com/vi/dLzThnrqYFY/hqdefault.jpg",
+  },
   { id: "soon-4", stub: true },
   { id: "soon-5", stub: true },
   { id: "soon-6", stub: true },
+];
+
+const FANWORKS = [
+  { id: "fan-clip-1", kind: "clip", title: "Фан-клип", stub: true },
+  { id: "fan-art-1", kind: "art", title: "Арт", stub: true },
+  { id: "fan-clip-2", kind: "clip", title: "Фан-клип", stub: true },
+  { id: "fan-art-2", kind: "art", title: "Арт", stub: true },
+  { id: "fan-clip-3", kind: "clip", title: "Фан-клип", stub: true },
+  { id: "fan-art-3", kind: "art", title: "Арт", stub: true },
 ];
 
 const CATS = [
