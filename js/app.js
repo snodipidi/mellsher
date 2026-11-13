@@ -561,7 +561,7 @@ function renderHome() {
           <p class="lede">Фильмы без реакции — пока только оценки.</p>
           ${scrollerRow(filmsScoresOnly().map(filmCard).join(""))}
         </div>
-        <div class="center"><a class="pill" href="films.html">Все рецензии</a></div>
+        <div class="center"><a class="pill" href="films.html">Все оценки</a></div>
       </section>
       <section class="section" id="links">
         ${sectionTitle("Ссылки")}
@@ -768,6 +768,7 @@ function releaseCard(item, { teaser = false } = {}) {
   const text = teaser || item.featured
     ? sentences.slice(0, 2).join(" ")
     : sentences.slice(0, 3).join(" ");
+  const href = item.href || SITE.music;
   return `<article class="release ${item.featured ? "featured" : ""} ${item.cover ? "has-cover" : ""}" id="${esc(item.id)}">
     ${releaseCover(item)}
     <div class="release-body">
@@ -775,7 +776,7 @@ function releaseCard(item, { teaser = false } = {}) {
       <h3>${esc(item.title)}</h3>
       <div class="kind">${esc(item.kind)}${item.year ? ` · ${item.year}` : ""}</div>
       <p>${esc(text)}</p>
-      <a class="btn ${item.featured ? "pink" : ""}" href="${esc(item.href)}" target="_blank" rel="noopener noreferrer">Слушать</a>
+      <a class="btn ${item.featured ? "pink" : ""}" href="${esc(href)}" target="_blank" rel="noopener noreferrer">Слушать</a>
     </div>
   </article>`;
 }
@@ -784,17 +785,44 @@ function trackIsSolo(item) {
   return /сольн/i.test(item.kind || "");
 }
 
-function sortTracks(tracks, mode = "solo") {
+function trackIsSingle(item) {
+  return /сингл/i.test(item.kind || "");
+}
+
+function trackIsSoloAlbumTrack(item) {
+  return /сольн.*трек/i.test(item.kind || "");
+}
+
+function trackDefaultRank(item) {
+  if (trackIsSingle(item)) return 3;
+  if (trackIsSoloAlbumTrack(item)) return 2;
+  return 1;
+}
+
+function trackSoloRank(item) {
+  if (trackIsSolo(item) && trackIsSingle(item)) return 2;
+  if (trackIsSolo(item)) return 1;
+  return 0;
+}
+
+function trackDate(item) {
+  if (item.date) return item.date;
+  if (item.year) return `${item.year}-01-01`;
+  return "0000-01-01";
+}
+
+function sortTracks(tracks, mode = "default") {
   const ranked = tracks.map((item, index) => ({ item, index }));
-  const byNew = (a, b) => (b.item.year || 0) - (a.item.year || 0) || a.index - b.index;
-  const byOld = (a, b) => (a.item.year || 0) - (b.item.year || 0) || b.index - a.index;
-  const bySolo = (a, b) => Number(trackIsSolo(b.item)) - Number(trackIsSolo(a.item)) || byNew(a, b);
+  const byNew = (a, b) => trackDate(b.item).localeCompare(trackDate(a.item)) || a.index - b.index;
+  const byOld = (a, b) => trackDate(a.item).localeCompare(trackDate(b.item)) || a.index - b.index;
+  const byDefault = (a, b) => trackDefaultRank(b.item) - trackDefaultRank(a.item) || byNew(a, b);
+  const bySolo = (a, b) => trackSoloRank(b.item) - trackSoloRank(a.item) || byNew(a, b);
   const byFeat = (a, b) => Number(trackIsSolo(a.item)) - Number(trackIsSolo(b.item)) || byNew(a, b);
-  const sorter = { solo: bySolo, new: byNew, old: byOld, feat: byFeat }[mode] || bySolo;
+  const sorter = { default: byDefault, solo: bySolo, new: byNew, old: byOld, feat: byFeat }[mode] || byDefault;
   return ranked.sort(sorter).map(({ item }) => item);
 }
 
-function renderTrackGrid(mode = "solo") {
+function renderTrackGrid(mode = "default") {
   const tracks = sortTracks(RELEASES.filter((item) => item.type === "track"), mode);
   const grid = $("[data-tracks-grid]");
   if (!grid) return;
@@ -802,14 +830,14 @@ function renderTrackGrid(mode = "solo") {
 }
 
 function renderMusic() {
-  const albums = RELEASES.filter((item) => item.type === "album");
+  const albums = sortTracks(RELEASES.filter((item) => item.type === "album" && !item.stub), "new");
   $("#page").innerHTML = `
     <div class="wrap page">
       <div class="music-hero">
         <div class="music-lead has-live">
           <div class="music-lead-copy">
             <span class="kicker">Музыка</span>
-            <h2>Релизы MellSher</h2>
+            <h2>Релизы MellSher'a</h2>
             <p>Сольники и совместные треки с 5opka — свежие релизы и то, что уже успело осесть в плейлистах.</p>
             <a class="btn pink" href="#albums">К релизам</a>
           </div>
@@ -835,11 +863,12 @@ function renderMusic() {
       </section>
       <section class="section" id="tracks">
         <div class="section-head">
-          <h2>Треки</h2>
+          <h2>Треки (В РАЗРАБОТКЕ)</h2>
           <label class="track-sort">
             <span>Сортировка</span>
             <select data-track-sort>
-              <option value="solo" selected>Сначала сольные</option>
+              <option value="default" selected>По умолчанию</option>
+              <option value="solo">Сначала сольные</option>
               <option value="new">Сначала новые</option>
               <option value="old">Сначала старые</option>
               <option value="feat">Сначала фиты</option>
@@ -853,7 +882,7 @@ function renderMusic() {
         ${musicClipsBlocks()}
       </section>
     </div>`;
-  renderTrackGrid("solo");
+  renderTrackGrid("default");
   $("[data-track-sort]").addEventListener("change", (event) => {
     renderTrackGrid(event.target.value);
   });
@@ -956,7 +985,7 @@ function renderFilm() {
         <p>${esc(item.text || "Описание скоро появится.")}</p>
       </section>
       <section class="section">
-        ${sectionTitle("Ещё фильмы", "films.html", "Все рецензии")}
+        ${sectionTitle("Ещё фильмы", "films.html", "Все оценки")}
         ${scrollerRow(more.map(filmCard).join(""))}
       </section>
     </div>`;
