@@ -33,7 +33,7 @@ function toast(text) {
   el.textContent = text;
   el.classList.add("show");
   clearTimeout(toast._t);
-  toast._t = setTimeout(() => el.classList.remove("show"), 1600);
+  toast._t = setTimeout(() => el.classList.remove("show"), 2200);
 }
 
 function streamById(id) {
@@ -122,15 +122,56 @@ function linkCard(item) {
 
 function merchCard(item) {
   const sold = item.soldOut ? `<span class="merch-sold">Sold out</span>` : "";
-  return `<a class="merch-item" href="${esc(item.href)}" target="_blank" rel="noopener noreferrer">
-      <div class="merch-photo"><img src="${esc(item.image)}" alt="${esc(item.title)}"></div>
+  const price = item.text
+    ? `<div class="merch-meta"><span class="merch-price">${esc(item.text)}</span>${sold}</div>`
+    : sold
+      ? `<div class="merch-meta">${sold}</div>`
+      : "";
+  const note = item.note ? `<span class="merch-note">${esc(item.note)}</span>` : "";
+  const body = `<div class="merch-photo"><img src="${esc(item.image)}" alt="${esc(item.title)}"></div>
       <div class="merch-body">
         <strong>${esc(item.title)}</strong>
-        <div class="merch-meta">
-          <span class="merch-price">${esc(item.text)}</span>${sold}
-        </div>
+        ${price}
+        ${note}
+      </div>`;
+  if (item.unavailable || !item.href) {
+    return `<button type="button" class="merch-item" data-merch-unavailable>
+      ${body}
+    </button>`;
+  }
+  return `<a class="merch-item" href="${esc(item.href)}" target="_blank" rel="noopener noreferrer">
+      ${body}
+    </a>`;
+}
+
+function channelCard(item) {
+  return `<a class="channel-card" href="${esc(item.href)}" target="_blank" rel="noopener noreferrer">
+      <div class="channel-photo"><img src="${esc(item.image)}" alt="" loading="lazy"></div>
+      <div class="channel-body">
+        <strong>${esc(item.title)}</strong>
+        <span>${esc(item.handle)}</span>
       </div>
     </a>`;
+}
+
+function musicClipsSolo() {
+  return MUSIC_CLIPS.filter((item) => !item.feat);
+}
+
+function musicClipsFeat() {
+  return MUSIC_CLIPS.filter((item) => item.feat);
+}
+
+function musicClipsBlocks() {
+  return `
+    <div class="film-strip clip-strip">
+      <h3 class="strip-title">Сольные</h3>
+      ${scrollerRow(musicClipsSolo().map((item) => watchCard(item)).join(""))}
+    </div>
+    <div class="film-strip clip-strip">
+      <h3 class="strip-title">Совместные</h3>
+      ${scrollerRow(musicClipsFeat().map((item) => watchCard(item)).join(""))}
+    </div>`;
 }
 
 function watchCard(item, index) {
@@ -222,7 +263,7 @@ function mountChrome(active) {
       <button class="menu-btn" type="button" aria-label="Меню" data-menu>☰</button>
       <nav class="nav" aria-label="Разделы сайта">
         <a href="index.html" class="${active === "home" ? "active" : ""}">Главная</a>
-        <a href="streams.html" class="${active === "streams" ? "active" : ""}">Топ нарезок</a>
+        <a href="streams.html" class="${active === "streams" ? "active" : ""}">Нарезки</a>
         <div class="drop">
           <button type="button" data-drop>Для стримов</button>
           <div class="drop-menu">
@@ -259,7 +300,7 @@ function mountChrome(active) {
         </nav>
         <nav aria-label="Разделы">
           <h2>На сайте</h2>
-          <a href="streams.html">Топ нарезок</a>
+          <a href="streams.html">Где смотреть нарезки</a>
           <a href="films.html">Рецензии фильмов</a>
           <a href="index.html#tour">Прощальный тур</a>
           <a href="index.html#merch">Мерч</a>
@@ -301,16 +342,20 @@ function bindChrome() {
       pop.innerHTML = "";
       return;
     }
-    const clips = [...MUSIC_CLIPS, ...CLIPS]
+    const clips = MUSIC_CLIPS
       .filter((item) => !item.stub && `${item.title} ${item.kicker || ""}`.toLowerCase().includes(q))
       .slice(0, 6);
+    const channels = CLIP_CHANNELS
+      .filter((item) => `${item.title} ${item.handle}`.toLowerCase().includes(q))
+      .slice(0, 4);
     const streams = STREAMS.filter((item) => `${item.title} ${item.blurb}`.toLowerCase().includes(q)).slice(0, 4);
     const releases = RELEASES.filter((item) => !item.stub && `${item.title} ${item.kind || ""}`.toLowerCase().includes(q)).slice(0, 3);
     const series = SERIES.filter((item) => !item.stub && item.title?.toLowerCase().includes(q)).slice(0, 3);
     const merch = MERCH.filter((item) => `${item.title} ${item.text}`.toLowerCase().includes(q)).slice(0, 3);
     const films = FILMS.filter((item) => item.title.toLowerCase().includes(q)).slice(0, 3);
     const rows = [
-      ...clips.map((item) => `<a href="${esc(item.href)}" target="_blank" rel="noopener noreferrer"><b>${esc(item.title)}</b><small>Нарезка</small></a>`),
+      ...clips.map((item) => `<a href="${esc(item.href)}" target="_blank" rel="noopener noreferrer"><b>${esc(item.title)}</b><small>Клип</small></a>`),
+      ...channels.map((item) => `<a href="${esc(item.href)}" target="_blank" rel="noopener noreferrer"><b>${esc(item.title)}</b><small>Нарезки</small></a>`),
       ...streams.map((item) => `<a href="stream.html?id=${esc(item.id)}"><b>${esc(item.title)}</b><small>Эфир</small></a>`),
       ...series.map((item) => `<a href="series.html?id=${esc(item.id)}"><b>${esc(item.title)}</b><small>Сериал шоу</small></a>`),
       ...merch.map((item) => `<a href="${esc(item.href)}" target="_blank" rel="noopener noreferrer"><b>${esc(item.title)}</b><small>Мерч</small></a>`),
@@ -381,6 +426,12 @@ function bindActions(root = document) {
       event.preventDefault();
       event.stopPropagation();
       toggleSave(save.dataset.save);
+      return;
+    }
+    const merchGone = event.target.closest("[data-merch-unavailable]");
+    if (merchGone) {
+      event.preventDefault();
+      toast("На Kapusta Shop пока не продаётся");
       return;
     }
     const rateBtn = event.target.closest("[data-rate]");
@@ -465,11 +516,11 @@ function renderHome() {
       </section>
       <section class="section" id="music-clips">
         ${sectionTitle("Клипы", "music.html#clips", "Все клипы")}
-        ${scrollerRow(MUSIC_CLIPS.map((item) => watchCard(item)).join(""))}
+        ${musicClipsBlocks()}
       </section>
       <section class="section" id="clips">
-        ${sectionTitle("Топ нарезок", "streams.html")}
-        ${scrollerRow(CLIPS.map((item, i) => watchCard(item, i + 1)).join(""))}
+        ${sectionTitle("Где смотреть нарезки?", "streams.html", "Все каналы")}
+        <div class="channel-grid">${CLIP_CHANNELS.map(channelCard).join("")}</div>
       </section>
       <section class="section" id="films">
         ${sectionTitle("Рецензии фильмов", "films.html")}
@@ -555,11 +606,12 @@ function renderSeries(index, direction = 0) {
 }
 
 function renderStreams() {
+  document.title = "Где смотреть нарезки? — MellSher";
   $("#page").innerHTML = `
     <div class="wrap page">
-      <h1 class="page-title">Топ нарезок</h1>
-      <p class="lede">Лучшие нарезки с эфиров. Места, которые ещё собираются, отмечены как заглушки.</p>
-      <div class="catalog">${CLIPS.map((item, i) => watchCard(item, i + 1)).join("")}</div>
+      <h1 class="page-title">Где смотреть нарезки?</h1>
+      <p class="lede">Каналы с нарезками стримов MellSher.</p>
+      <div class="channel-grid channel-grid-page">${CLIP_CHANNELS.map(channelCard).join("")}</div>
     </div>`;
 }
 
@@ -770,7 +822,7 @@ function renderMusic() {
       </section>
       <section class="section" id="clips">
         ${sectionTitle("Клипы")}
-        <div class="catalog clips-catalog">${MUSIC_CLIPS.map((item) => watchCard(item)).join("")}</div>
+        ${musicClipsBlocks()}
       </section>
     </div>`;
   renderTrackGrid("solo");
