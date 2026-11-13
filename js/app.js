@@ -84,6 +84,39 @@ function card(item, index) {
   </article>`;
 }
 
+function audienceCard(item) {
+  if (item.stub) {
+    return `<article class="audience-item is-stub">
+      <div class="audience-photo stub-poster">
+        <span class="poster-kicker">Скоро</span>
+        <span class="poster-title">Скоро</span>
+      </div>
+      <div class="audience-body">
+        <strong>${esc(item.title || "Скоро")}</strong>
+        <span class="audience-action is-muted">Скоро</span>
+      </div>
+    </article>`;
+  }
+  const photo = item.image
+    ? `<div class="audience-photo${item.id === "m5cards" ? " is-logo" : ""}"><img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy"></div>`
+    : `<div class="audience-photo stub-poster">
+        <span class="poster-kicker">${esc(item.action || "Открыть")}</span>
+        <span class="poster-title">${esc(item.title)}</span>
+      </div>`;
+  const text = item.text ? `<p>${esc(item.text)}</p>` : "";
+  const action = item.action ? `<span class="audience-action${item.id === "fan-clips" ? " is-pink" : ""}">${esc(item.action)}</span>` : "";
+  const body = `${photo}
+      <div class="audience-body">
+        <strong>${esc(item.title)}</strong>
+        ${text}
+        ${action}
+      </div>`;
+  if (item.local) {
+    return `<a class="audience-item" href="${esc(item.href)}">${body}</a>`;
+  }
+  return `<a class="audience-item" href="${esc(item.href)}" target="_blank" rel="noopener noreferrer">${body}</a>`;
+}
+
 function fanworkCard(item) {
   const kicker = item.kind === "art" ? "Арт" : "Фан-клип";
   if (item.stub) {
@@ -166,7 +199,16 @@ function merchCard(item) {
       ${body}
     </a>`;
   /* пасхалка-стикер временно выкл.
-  let card = ...;
+  let card;
+  if (item.unavailable || !item.href) {
+    card = `<button type="button" class="merch-item" data-merch-unavailable>
+      ${body}
+    </button>`;
+  } else {
+    card = `<a class="merch-item" href="${esc(item.href)}" target="_blank" rel="noopener noreferrer">
+      ${body}
+    </a>`;
+  }
   if (item.id !== "futbolka-demon") return card;
   return `<div class="merch-egg-wrap">
     ${card}
@@ -359,6 +401,8 @@ function mountChrome(active) {
           <a href="films.html">Рецензии фильмов</a>
           <a href="index.html#tour">Прощальный тур</a>
           <a href="index.html#merch">Мерч</a>
+          <a href="index.html#fans">От лица аудитории</a>
+          <a href="fan-clips.html">Фан-клипы</a>
           <a href="index.html#links">Ссылки</a>
         </nav>
       </div>
@@ -607,9 +651,9 @@ function renderHome() {
         <div class="links-grid">${LINKS.map(linkCard).join("")}</div>
       </section>
       <section class="section" id="fans">
-        ${sectionTitle("Творчество подписчиков")}
-        <p class="lede">Фан-клипы и арты от комьюнити — пока заглушки, контент появится позже.</p>
-        <div class="scroller">${FANWORKS.map(fanworkCard).join("")}</div>
+        ${sectionTitle("От лица аудитории")}
+        <p class="lede">Всё, чем живёт фанатское сообщество</p>
+        <div class="audience-grid">${AUDIENCE.map(audienceCard).join("")}</div>
       </section>
     </div>
     <section class="live wrap" id="live">
@@ -1082,6 +1126,17 @@ function renderFilm() {
   bindScrollers($("#page"));
 }
 
+function renderFanClips() {
+  document.title = "Фан-клипы — MellSher";
+  $("#page").innerHTML = `
+    <div class="wrap page">
+      <p class="kicker"><a href="index.html#fans">От лица аудитории</a> · фан-клипы</p>
+      <h1 class="page-title">Фан-клипы</h1>
+      <p class="lede">Клипы от зрителей — пока заглушки, контент появится позже.</p>
+      <div class="catalog fan-clips-grid">${FANWORKS.map(fanworkCard).join("")}</div>
+    </div>`;
+}
+
 const pages = {
   home: renderHome,
   streams: renderStreams,
@@ -1090,6 +1145,7 @@ const pages = {
   music: renderMusic,
   films: renderFilms,
   film: renderFilm,
+  "fan-clips": renderFanClips,
 };
 
 const page = document.body.dataset.page;

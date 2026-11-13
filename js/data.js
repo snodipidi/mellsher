@@ -359,7 +359,7 @@ const RELEASES = [
     type: "album",
     kind: "Сольный альбом",
     cover: "assets/covers/svet.jpg",
-    text: "Сольный альбом: Демоны, Я справлюсь сам, Неудачник и другие треки.",
+    text: "Второй сольный альбом Игоря, продолжающий тему самокопания и анализа собственных переживаний",
     href: "https://music.yandex.ru/album/36245418",
   },
   {
@@ -405,7 +405,7 @@ const RELEASES = [
     type: "track",
     kind: "Сольный сингл",
     cover: "assets/covers/x.jpg",
-    text: "Короткий сольный сингл: жёсткий припев и образ «икса» как метки на отношениях.",
+    text: "Трек подвязывается к значимой для Игоря дате - 22 апреля 2026 ему исполняется 30 лет.",
     href: "https://music.yandex.ru/album/41562915/track/150212838",
   },
   {
@@ -785,7 +785,7 @@ const RELEASES = [
     type: "track",
     kind: "Сингл с 5opka",
     cover: "assets/covers/repit.png",
-    text: "Сингл про зацикленность — репит чувств, ошибок и той же ночи снова и снова.",
+    text: "Идейное продолжение релиза - «Мерси», в котором поется о своей повседневной жизни",
     href: "https://music.yandex.ru/album/37445326/track/140662604",
   },
 
@@ -987,7 +987,7 @@ const RELEASES = [
     type: "track",
     kind: "Сингл с 5opka",
     cover: "assets/covers/supernova.png",
-    text: "Сингл с 5opka про роль клоуна: смеяться в голос, когда внутри уже не смешно.",
+    text: "Трек вдохновлен баном 5opka на Twitch и клоунской тематикой стримерского амплуа.",
     href: "https://music.yandex.ru/album/29351485/track/121793169",
   },
 
@@ -2029,13 +2029,50 @@ const CLIP_CHANNELS = [
   },
 ];
 
+const AUDIENCE = [
+  {
+    id: "nimellsher",
+    title: "НИ МЕЛЛШЕР",
+    href: "https://t.me/NiMellsher",
+    image: "assets/nimellsher.png",
+    text: "Самый лучший новостной канал по меллшеру, песни, шоу, аукционы, ирл стримы, обо всём этом вы узнаете здесь!",
+    action: "Telegram",
+  },
+  {
+    id: "confession",
+    title: "MellSher Confession",
+    href: "https://t.me/MellSherCONF",
+    image: "assets/mellsher-confession.png",
+    text: "Здесь вы найдете фотографии, арты и иной контент связанный с Игорем Шерстюком.",
+    action: "Telegram",
+  },
+  {
+    id: "m5cards",
+    title: "M5CARDS",
+    href: "https://t.me/m5cards",
+    image: "assets/m5cards.png",
+    text: "Творческий проект, путешествующий вместе с 5opka и MellSher из города в город. Каждый концерт приносит новую часть коллекции с уникальным художественным оформлением, созданным специально для этого города, а сами артисты собирают её вместе с вами на протяжении всего тура.",
+    action: "Telegram",
+  },
+  {
+    id: "fan-clips",
+    title: "ФАН-КЛИПЫ",
+    href: "fan-clips.html",
+    local: true,
+    text: "Клипы от зрителей",
+    action: "В РАЗРАБОТКЕ",
+  },
+  { id: "fan-art", title: "Художники", stub: true },
+  { id: "fan-memes", title: "еще чето", stub: true },
+];
+
 const FANWORKS = [
   { id: "fan-clip-1", kind: "clip", title: "Фан-клип", stub: true },
-  { id: "fan-art-1", kind: "art", title: "Арт", stub: true },
   { id: "fan-clip-2", kind: "clip", title: "Фан-клип", stub: true },
-  { id: "fan-art-2", kind: "art", title: "Арт", stub: true },
   { id: "fan-clip-3", kind: "clip", title: "Фан-клип", stub: true },
-  { id: "fan-art-3", kind: "art", title: "Арт", stub: true },
+  { id: "fan-clip-4", kind: "clip", title: "Фан-клип", stub: true },
+  { id: "fan-clip-5", kind: "clip", title: "Фан-клип", stub: true },
+  { id: "fan-clip-6", kind: "clip", title: "Фан-клип", stub: true },
 ];
 
 const CATS = [
