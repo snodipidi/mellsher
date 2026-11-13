@@ -291,14 +291,6 @@ function mountChrome(active) {
       <nav class="nav" aria-label="Разделы сайта">
         <a href="index.html" class="${active === "home" ? "active" : ""}">Главная</a>
         <a href="streams.html" class="${active === "streams" ? "active" : ""}">Нарезки</a>
-        <div class="drop">
-          <button type="button" data-drop>Для стримов</button>
-          <div class="drop-menu">
-            <a href="for.html#commands">Команды чата</a>
-            <a href="for.html#rules">Правила</a>
-            <a href="for.html#where">Где смотреть</a>
-          </div>
-        </div>
         <a href="music.html" class="${active === "music" ? "active" : ""}">Музыка</a>
         <a href="films.html" class="${active === "films" ? "active" : ""}">Фильмы</a>
       </nav>
@@ -356,9 +348,6 @@ function bindChrome() {
   window.addEventListener("scroll", onScroll, { passive: true });
   $("[data-top]").addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
   $("[data-menu]").addEventListener("click", () => $(".nav").classList.toggle("open"));
-  $("[data-drop]").addEventListener("click", (event) => {
-    event.currentTarget.parentElement.classList.toggle("open");
-  });
 
   const input = $(".search input");
   const pop = $(".search-pop");
@@ -373,13 +362,21 @@ function bindChrome() {
       .filter((item) => !item.stub && `${item.title} ${item.kicker || ""}`.toLowerCase().includes(q))
       .slice(0, 6);
     const channels = CLIP_CHANNELS
-      .filter((item) => `${item.title} ${item.handle}`.toLowerCase().includes(q))
+      .filter((item) => `${item.title || ""} ${item.handle || ""}`.toLowerCase().includes(q))
       .slice(0, 4);
-    const streams = STREAMS.filter((item) => `${item.title} ${item.blurb}`.toLowerCase().includes(q)).slice(0, 4);
-    const releases = RELEASES.filter((item) => !item.stub && `${item.title} ${item.kind || ""}`.toLowerCase().includes(q)).slice(0, 3);
+    const streams = STREAMS
+      .filter((item) => `${item.title || ""} ${item.blurb || ""} ${item.kicker || ""}`.toLowerCase().includes(q))
+      .slice(0, 4);
+    const releases = RELEASES
+      .filter((item) => !item.stub && `${item.title || ""} ${item.kind || ""}`.toLowerCase().includes(q))
+      .slice(0, 3);
     const series = SERIES.filter((item) => !item.stub && item.title?.toLowerCase().includes(q)).slice(0, 3);
-    const merch = MERCH.filter((item) => `${item.title} ${item.text}`.toLowerCase().includes(q)).slice(0, 3);
-    const films = FILMS.filter((item) => item.title.toLowerCase().includes(q)).slice(0, 3);
+    const merch = MERCH
+      .filter((item) => `${item.title || ""} ${item.text || ""}`.toLowerCase().includes(q))
+      .slice(0, 3);
+    const films = FILMS
+      .filter((item) => !item.stub && `${item.title || ""} ${item.short || ""}`.toLowerCase().includes(q))
+      .slice(0, 5);
     const rows = [
       ...clips.map((item) => `<a href="${esc(item.href)}" target="_blank" rel="noopener noreferrer"><b>${esc(item.title)}</b><small>Клип</small></a>`),
       ...channels.map((item) => `<a href="${esc(item.href)}" target="_blank" rel="noopener noreferrer"><b>${esc(item.title)}</b><small>Нарезки</small></a>`),
@@ -388,8 +385,7 @@ function bindChrome() {
       ...merch.map((item) => `<a href="${esc(item.href)}" target="_blank" rel="noopener noreferrer"><b>${esc(item.title)}</b><small>Мерч</small></a>`),
       ...releases.map((item) => `<a href="music.html#${esc(item.id)}"><b>${esc(item.title)}</b><small>${esc(item.kind)}</small></a>`),
       ...films.map((item) => {
-        const href = item.text || item.reaction ? `film.html?id=${esc(item.id)}` : `films.html#${esc(item.id)}`;
-        return `<a href="${href}"><b>${esc(item.title)}</b><small>Фильм · ${esc(item.score)}</small></a>`;
+        return `<a href="film.html?id=${esc(item.id)}"><b>${esc(item.title)}</b><small>Фильм · ${esc(item.score)}</small></a>`;
       }),
     ];
     pop.innerHTML = rows.join("") || `<div class="search-empty">Ничего не нашлось</div>`;
@@ -469,12 +465,20 @@ function bindActions(root = document) {
   });
 }
 
+function scoreTone(n) {
+  if (n < 5) return "bad";
+  if (n < 7) return "mid";
+  return "good";
+}
+
 function filmScore(value) {
   const raw = String(value ?? "").trim();
-  if (!raw || /не\s*помнит/i.test(raw)) return `<b>—</b>`;
+  if (!raw || /не\s*помнит/i.test(raw)) return `<b class="score-val">—</b>`;
   const n = Number(raw.replace(",", "."));
-  if (Number.isFinite(n)) return `<b><i style="color:var(--star)">★</i> ${n.toFixed(1)}</b>`;
-  return `<b>${esc(raw)}</b>`;
+  if (Number.isFinite(n)) {
+    return `<b class="score-val score-${scoreTone(n)}"><i>★</i> ${n.toFixed(1)}</b>`;
+  }
+  return `<b class="score-val">${esc(raw)}</b>`;
 }
 
 function filmCard(item) {
@@ -483,29 +487,25 @@ function filmCard(item) {
       <div class="poster stub-poster"><span class="poster-title">Скоро</span></div>
       <div class="card-body">
         <h3>Скоро</h3>
-        <div class="film-scores"><span>MellSher <b>—</b></span><span>Кинопоиск <b>—</b></span></div>
+        <div class="film-scores"><span>MellSher <b class="score-val">—</b></span><span>Кинопоиск <b class="score-val">—</b></span></div>
       </div>
     </article>`;
   }
-  const open = item.reaction || item.text;
   const title = item.short || item.title;
-  const href = open ? `film.html?id=${esc(item.id)}` : "";
+  const href = `film.html?id=${esc(item.id)}`;
   const poster = item.image
     ? `<img src="${esc(item.image)}" alt="" loading="lazy">`
     : "";
   const inner = `
     <div class="poster thumb film-thumb">
       ${poster}
-      ${href ? `<span class="poster-link" aria-hidden="true"></span>` : ""}
+      <span class="poster-link" aria-hidden="true"></span>
     </div>
     <div class="card-body">
       <h3 title="${esc(item.title)}">${esc(title)}</h3>
       <div class="film-scores"><span>MellSher ${filmScore(item.score)}</span><span>Кинопоиск ${filmScore(item.kp)}</span></div>
     </div>`;
-  if (href) {
-    return `<a class="card clip-card film-card is-link" id="${esc(item.id)}" href="${href}">${inner}</a>`;
-  }
-  return `<article class="card clip-card film-card score-only" id="${esc(item.id)}">${inner}</article>`;
+  return `<a class="card clip-card film-card is-link" id="${esc(item.id)}" href="${href}">${inner}</a>`;
 }
 
 function tourCards() {
@@ -558,7 +558,7 @@ function renderHome() {
         </div>
         <div class="film-strip">
           <h3 class="strip-title">Только оценки</h3>
-          <p class="lede">Фильмы без реакции — пока только оценки.</p>
+          <p class="lede">Фильмы без реакции на видео — оценки и страница с информацией.</p>
           ${scrollerRow(filmsScoresOnly().map(filmCard).join(""))}
         </div>
         <div class="center"><a class="pill" href="films.html">Все оценки</a></div>
@@ -891,34 +891,6 @@ function renderMusic() {
   }
 }
 
-function renderFor() {
-  $("#page").innerHTML = `
-    <div class="wrap page">
-      <h1 class="page-title">Для стримов</h1>
-      <p class="lede">Коротко, чтобы не спрашивать одно и то же в первые десять минут эфира.</p>
-      <section class="section" id="commands">
-        <h2 class="block-title">Команды чата</h2>
-        <div class="stack">
-          ${COMMANDS.map((item) => `<div class="cmd"><code>${esc(item.cmd)}</code><span>${esc(item.text)}</span></div>`).join("")}
-        </div>
-      </section>
-      <section class="section" id="rules">
-        <h2 class="block-title">Правила</h2>
-        <ol class="rules">${RULES.map((rule) => `<li>${esc(rule)}</li>`).join("")}</ol>
-      </section>
-      <section class="section" id="where">
-        <h2 class="block-title">Где смотреть</h2>
-        <div class="release-grid">
-          <a class="release" href="${SITE.twitch}" target="_blank" rel="noopener noreferrer"><h3>Twitch</h3><p>Основной эфир: шоу, кукинг и ночной чат. Канал mellsher.</p><span class="btn pink">Открыть</span></a>
-          <a class="release" href="${SITE.telegram}" target="_blank" rel="noopener noreferrer"><h3>Telegram</h3><p>«Голоса в голове MellShera» — анонсы, клипы и переносы, если сетка сдвинулась.</p><span class="btn">Открыть</span></a>
-          <a class="release" href="${SITE.youtube}" target="_blank" rel="noopener noreferrer"><h3>YouTube</h3><p>Нарезки и длинные ролики — то, что уходит с эфира в постоянный архив.</p><span class="btn">Открыть</span></a>
-          <a class="release" href="index.html#tour"><h3>Тур</h3><p>Ближайшие площадки прощального тура с 5opka. В зале телефон лучше поднять на XXL, а не на правила чата.</p><span class="btn">Даты</span></a>
-          <a class="release" href="${SITE.merch}" target="_blank" rel="noopener noreferrer"><h3>Мерч</h3><p>Магазин kapusta.shop — худи, футболки и остальной мерч MellSher.</p><span class="btn">Открыть</span></a>
-        </div>
-      </section>
-    </div>`;
-}
-
 function renderFilms() {
   $("#page").innerHTML = `
     <div class="wrap page">
@@ -930,38 +902,89 @@ function renderFilms() {
       </div>
       <div class="film-strip">
         <h2 class="block-title">Только оценки</h2>
-        <p class="lede">Фильмы без реакции — только оценки MellSher и Кинопоиска.</p>
+        <p class="lede">Фильмы без реакции на видео — оценки MellSher и Кинопоиска. Карточка открывает страницу фильма.</p>
         <div class="film-grid">${filmsScoresOnly().map(filmCard).join("")}</div>
       </div>
     </div>`;
 }
 
+function filmTakePhoto() {
+  return `<div class="film-take-photo" aria-hidden="true">
+      <img src="assets/mellsher-avatar.png" alt="">
+    </div>`;
+}
+
+function filmCommentParagraphs(text) {
+  return String(text)
+    .split(/\n+/)
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => `<p>${esc(part)}</p>`)
+    .join("");
+}
+
+function filmCommentBlock(item) {
+  if (item.comment) {
+    return `<aside class="film-take has-quote">
+        <div class="film-take-top">
+          ${filmTakePhoto()}
+          <div class="film-take-meta">
+            <strong>MellSher</strong>
+            <span>комментарий к оценке</span>
+          </div>
+        </div>
+        <blockquote class="film-quote">${filmCommentParagraphs(item.comment)}</blockquote>
+      </aside>`;
+  }
+  if (item.reaction) {
+    return `<aside class="film-take has-reaction">
+        <div class="film-take-top">
+          ${filmTakePhoto()}
+          <div class="film-take-meta">
+            <strong>MellSher</strong>
+            <span>есть видеореакция</span>
+          </div>
+        </div>
+        <p class="film-take-note">Разбор смотри в реакции — там оценка и всё, что Игорь сказал про фильм.</p>
+        <a class="btn pink" href="${esc(item.reaction)}" target="_blank" rel="noopener noreferrer">Смотреть реакцию</a>
+      </aside>`;
+  }
+  return `<aside class="film-take is-empty">
+      <div class="film-take-top">
+        ${filmTakePhoto()}
+        <div class="film-take-meta">
+          <strong>MellSher</strong>
+          <span>без комментария</span>
+        </div>
+      </div>
+      <p class="film-take-note">Игорь никак не прокомментировал фильм.</p>
+    </aside>`;
+}
+
 function renderFilm() {
   const id = new URLSearchParams(location.search).get("id");
   const item = id ? filmById(id) : null;
-  if (!item || !(item.text || item.reaction)) {
+  if (!item || item.stub) {
     $("#page").innerHTML = `<div class="wrap page"><h1 class="page-title">Фильм не найден</h1><p class="lede"><a class="text-link" href="films.html">Ко всем рецензиям</a></p></div>`;
     return;
   }
   document.title = `${item.title} — MellSher`;
-  const related = FILMS.filter((other) => other.id !== item.id && (other.text || other.reaction)).slice(0, 4);
-  const more = related.length
-    ? related
-    : FILMS.filter((other) => other.id !== item.id && !other.stub).slice(0, 4);
+  const more = FILMS.filter((other) => other.id !== item.id && !other.stub).slice(0, 8);
   const poster = item.image
     ? `<div class="film-hero-poster"><img src="${esc(item.image)}" alt="${esc(item.title)}"></div>`
     : `<div class="film-hero-poster stub"><strong>${esc(item.title)}</strong></div>`;
+  const kicker = item.reaction ? "реакция MellSher" : "оценка MellSher";
   $("#page").innerHTML = `
     <section class="film-hero ${item.image ? "has-bg" : ""}" ${item.image ? `style="--film-bg:url('${esc(item.image)}')"` : ""}>
       <div class="film-hero-shade"></div>
       <div class="wrap film-hero-grid">
         ${poster}
         <div class="film-hero-copy">
-          <p class="kicker"><a href="films.html">Фильмы</a> · реакция MellSher${item.year ? ` · ${item.year}` : ""}</p>
+          <p class="kicker"><a href="films.html">Фильмы</a> · ${kicker}${item.year ? ` · ${item.year}` : ""}</p>
           <h1 class="page-title">${esc(item.title)}</h1>
           ${item.genre ? `<p class="film-genre">${esc(item.genre)}</p>` : ""}
           <div class="score-cards">
-            <div class="score-card">
+            <div class="score-card score-card-ms">
               <span>MellSher</span>
               <strong>${filmScore(item.score)}</strong>
             </div>
@@ -970,21 +993,22 @@ function renderFilm() {
               <strong>${filmScore(item.kp)}</strong>
             </div>
           </div>
+          <div class="film-hero-about">
+            <h2 class="film-hero-about-title">О фильме</h2>
+            <p>${esc(item.text || "Краткого описания пока нет — только оценка.")}</p>
+          </div>
           <div class="actions">
             ${item.reaction
               ? `<a class="btn pink" href="${esc(item.reaction)}" target="_blank" rel="noopener noreferrer">Смотреть реакцию</a>`
-              : `<span class="btn disabled">Реакции нет</span>`}
+              : ""}
             <a class="btn" href="films.html">Все фильмы</a>
           </div>
         </div>
       </div>
     </section>
     <div class="wrap page film-page">
-      <section class="film-panel">
-        <h2 class="strip-title">О фильме</h2>
-        <p>${esc(item.text || "Описание скоро появится.")}</p>
-      </section>
-      <section class="section">
+      ${filmCommentBlock(item)}
+      <section class="section film-more">
         ${sectionTitle("Ещё фильмы", "films.html", "Все оценки")}
         ${scrollerRow(more.map(filmCard).join(""))}
       </section>
@@ -998,7 +1022,6 @@ const pages = {
   stream: renderStream,
   series: renderSeriesPage,
   music: renderMusic,
-  for: renderFor,
   films: renderFilms,
   film: renderFilm,
 };
