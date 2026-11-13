@@ -5,7 +5,7 @@ const SITE = {
   youtube: "https://www.youtube.com/channel/UC-jvQ8iQYbdyW_biKdxp55Q",
   music: "https://music.yandex.ru/artist/13963001",
   merch: "https://kapusta.shop/5opkaMellsher",
-  private: "https://t.me/mellsher/5827",
+  private: "https://t.me/bar-2",
   tiktok: "https://www.tiktok.com/@mellsherrr",
   instagram: "https://www.instagram.com/mellsherrr/",
   discord: "https://discord.gg/UsfMCsdfNm",
@@ -81,7 +81,7 @@ const LINKS = [
   { id: "youtube", title: "YouTube", text: "Нарезки", href: SITE.youtube },
   { id: "music", title: "Музыка", text: "Яндекс Музыка", href: SITE.music },
   { id: "tiktok", title: "TikTok", text: "Короткие клипы", href: SITE.tiktok },
-  { id: "instagram", title: "Instagram", text: "Фото и сторис", href: SITE.instagram },
+  { id: "instagram", title: "Instagram*", text: "*Деятельность Meta (соцсети Facebook и Instagram) запрещена в России как экстремистская", href: SITE.instagram },
   { id: "discord", title: "Discord", text: "Сервер комьюнити", href: SITE.discord },
   { id: "donate", title: "Донат", text: "DonationAlerts", href: SITE.donate },
   { id: "vk", title: "VK", text: "Музыкальная страница", href: SITE.vk },
@@ -1370,6 +1370,13 @@ const CLIP_CHANNELS = [
     handle: "@melsherrofls",
     href: "https://www.youtube.com/@melsherrofls",
     image: "assets/channels/melsherrofls.png",
+  },
+  {
+    id: "cringeduo",
+    title: "Кринж Дуо Нарезки",
+    handle: "@CRINGEDUO",
+    href: "https://www.youtube.com/@CRINGEDUO",
+    image: "assets/channels/cringeduo.jpg",
   },
 ];
 

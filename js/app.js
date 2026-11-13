@@ -46,7 +46,7 @@ function filmById(id) {
   return FILMS.find((item) => item.id === id);
 }
 function filmsWithReaction() {
-  return FILMS.filter((item) => item.reaction);
+  return FILMS.filter((item) => item.reaction).slice().reverse();
 }
 function hasFilmScore(score) {
   if (score == null || score === "") return false;
@@ -111,12 +111,35 @@ function fanworkCard(item) {
   </article>`;
 }
 
+function linkIcon(id) {
+  const icons = {
+    telegram: `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#2AABEE" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8-1.61 7.59c-.12.55-.45.68-.91.42l-2.52-1.86-1.22 1.17c-.13.14-.25.25-.51.25l.18-2.56 4.67-4.22c.2-.18-.04-.28-.31-.1l-5.77 3.63-2.49-.78c-.54-.17-.55-.54.11-.8l9.72-3.75c.45-.16.84.11.77.81z"/></svg>`,
+    private: `<img src="assets/links/private.png" alt="" loading="lazy">`,
+    merch: `<img src="assets/links/kapusta.png" alt="" loading="lazy">`,
+    twitch: `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#9146FF" d="M4.3 2 2 5.7v14.6h5V22l2.8-1.7h4.3L20.6 14V2H4.3zm14.6 10.9-2.8 2.8h-4.3l-2.5 1.7v-1.7H6.3V4.3h12.6v8.6z"/><path fill="#9146FF" d="M14.9 6.6h1.7v5.1h-1.7V6.6zm-4.6 0H12v5.1H10.3V6.6z"/></svg>`,
+    youtube: `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#FF0033" d="M23.5 7.2a3 3 0 0 0-2.1-2.1C19.5 4.6 12 4.6 12 4.6s-7.5 0-9.4.5A3 3 0 0 0 .5 7.2 31.5 31.5 0 0 0 0 12a31.5 31.5 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.5 31.5 0 0 0 24 12a31.5 31.5 0 0 0-.5-4.8z"/><path fill="#fff" d="M9.8 15.3V8.7L15.8 12l-6 3.3z"/></svg>`,
+    music: `<img src="assets/links/yandex-music.png" alt="" loading="lazy">`,
+    tiktok: `<img src="assets/links/tiktok.png" alt="" loading="lazy">`,
+    instagram: `<img src="assets/links/instagram.jpg" alt="" loading="lazy">`,
+    discord: `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#5865F2" d="M19.3 5.1A17.4 17.4 0 0 0 15 3.9l-.4.8a15.5 15.5 0 0 1 3.7 1.4 12.4 12.4 0 0 0-11.6 0A15.5 15.5 0 0 1 9.4 4.7L9 3.9a17.4 17.4 0 0 0-4.3 1.2C2.1 9.2 1.4 13.1 1.7 17a17.6 17.6 0 0 0 5.3 2.7l.7-1.1a11.3 11.3 0 0 1-1.7-.8l.4-.3c3.3 1.5 6.9 1.5 10.2 0l.4.3c-.5.3-1.1.6-1.7.8l.7 1.1A17.5 17.5 0 0 0 22.3 17c.4-4.5-.6-8.4-3-11.9zM8.7 14.7c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.9.9 1.8 2-.8 2-1.8 2zm6.6 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.9.9 1.8 2-.8 2-1.8 2z"/></svg>`,
+    donate: `<img src="assets/links/donate.png" alt="" loading="lazy">`,
+    vk: `<img src="assets/links/vk.png" alt="" loading="lazy">`,
+  };
+  return icons[id] || `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="#888"/></svg>`;
+}
+
 function linkCard(item) {
   const cls = ["link-card", item.card].filter(Boolean).join(" ");
+  const imgIcons = new Set(["music", "private", "merch", "vk", "instagram", "donate", "tiktok"]);
+  const iconCls = ["link-icon", imgIcons.has(item.id) ? `is-${item.id}` : ""].filter(Boolean).join(" ");
+  const textCls = item.id === "instagram" ? "link-legal" : "";
   return `<a class="${cls}" href="${esc(item.href)}" target="_blank" rel="noopener noreferrer">
       ${item.badge ? `<span class="link-badge">${esc(item.badge)}</span>` : ""}
-      <strong>${esc(item.title)}</strong>
-      <span>${esc(item.text)}</span>
+      <span class="link-copy">
+        <strong>${esc(item.title)}</strong>
+        <span class="${textCls}">${esc(item.text)}</span>
+      </span>
+      <span class="${iconCls}">${linkIcon(item.id)}</span>
     </a>`;
 }
 
@@ -152,6 +175,10 @@ function channelCard(item) {
         <span>${esc(item.handle)}</span>
       </div>
     </a>`;
+}
+
+function channelScroller() {
+  return scrollerRow(CLIP_CHANNELS.map(channelCard).join(""), "channels");
 }
 
 function musicClipsSolo() {
@@ -520,7 +547,7 @@ function renderHome() {
       </section>
       <section class="section" id="clips">
         ${sectionTitle("Где смотреть нарезки?", "streams.html", "Все каналы")}
-        <div class="channel-grid">${CLIP_CHANNELS.map(channelCard).join("")}</div>
+        ${channelScroller()}
       </section>
       <section class="section" id="films">
         ${sectionTitle("Рецензии фильмов", "films.html")}
@@ -611,8 +638,9 @@ function renderStreams() {
     <div class="wrap page">
       <h1 class="page-title">Где смотреть нарезки?</h1>
       <p class="lede">Каналы с нарезками стримов MellSher.</p>
-      <div class="channel-grid channel-grid-page">${CLIP_CHANNELS.map(channelCard).join("")}</div>
+      ${channelScroller()}
     </div>`;
+  bindScrollers($("#page"));
 }
 
 function renderStream() {
@@ -869,15 +897,14 @@ function renderFilms() {
       <div class="film-strip">
         <h2 class="block-title">С реакциями</h2>
         <p class="lede">Что MellSher уже смотрел: его оценка и оценка Кинопоиска. Нажми на карточку — откроется страница с описанием и реакцией.</p>
-        ${scrollerRow(filmsWithReaction().map(filmCard).join(""))}
+        <div class="film-grid">${filmsWithReaction().map(filmCard).join("")}</div>
       </div>
       <div class="film-strip">
         <h2 class="block-title">Только оценки</h2>
         <p class="lede">Фильмы без реакции — только оценки MellSher и Кинопоиска.</p>
-        ${scrollerRow(filmsScoresOnly().map(filmCard).join(""))}
+        <div class="film-grid">${filmsScoresOnly().map(filmCard).join("")}</div>
       </div>
     </div>`;
-  bindScrollers($("#page"));
 }
 
 function renderFilm() {
