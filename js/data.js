@@ -306,6 +306,19 @@ const RELEASES = [
     href: "https://music.thefence.me/hm3rrr",
   },
   {
+    id: "razgrom",
+    title: "Разгром",
+    year: 2026,
+    date: "2026-10-23",
+    type: "track",
+    kind: "Сольный сингл",
+    featured: true,
+    badge: "Новый сингл",
+    cover: "assets/covers/razgrom.png",
+    text: "Название и обложка — отсылка к «Бойцовскому клубу», одному из любимых произведений Игоря.",
+    href: "https://music.yandex.ru/album/44513487/track/157205002",
+  },
+  {
     id: "opus",
     title: "Opus",
     year: 2026,
@@ -373,19 +386,6 @@ const RELEASES = [
   },
 
   // 2026 — сольные
-  {
-    id: "razgrom",
-    title: "Разгром",
-    year: 2026,
-    date: "2026-10-23",
-    type: "track",
-    kind: "Сольный сингл",
-    featured: true,
-    badge: "Новый сингл",
-    cover: "assets/covers/razgrom.png",
-    text: "Название и обложка — отсылка к «Бойцовскому клубу», одному из любимых произведений Игоря.",
-    href: "https://music.yandex.ru/album/44513487/track/157205002",
-  },
   {
     id: "dar",
     title: "Бессмертный дар",

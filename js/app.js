@@ -165,6 +165,16 @@ function merchCard(item) {
   return `<a class="merch-item" href="${esc(item.href)}" target="_blank" rel="noopener noreferrer">
       ${body}
     </a>`;
+  /* пасхалка-стикер временно выкл.
+  let card = ...;
+  if (item.id !== "futbolka-demon") return card;
+  return `<div class="merch-egg-wrap">
+    ${card}
+    <a class="tour-egg" href="https://www.youtube.com/watch?v=ClCpDu6UAFE" target="_blank" rel="noopener noreferrer" title="?" aria-label="Пасхалка">
+      <img src="assets/anal.png" alt="">
+    </a>
+  </div>`;
+  */
 }
 
 function channelCard(item) {
@@ -192,12 +202,18 @@ function musicClipsFeat() {
 function musicClipsBlocks() {
   return `
     <div class="film-strip clip-strip">
-      <h3 class="strip-title">Сольные</h3>
-      ${scrollerRow(musicClipsSolo().map((item) => watchCard(item)).join(""))}
+      <div class="clip-strip-head">
+        <h3 class="strip-title">Сольные</h3>
+        <span class="clip-strip-note">клипы MellSher</span>
+      </div>
+      ${scrollerRow(musicClipsSolo().map((item) => watchCard(item)).join(""), "clips")}
     </div>
-    <div class="film-strip clip-strip">
-      <h3 class="strip-title">Совместные</h3>
-      ${scrollerRow(musicClipsFeat().map((item) => watchCard(item)).join(""))}
+    <div class="film-strip clip-strip is-feat">
+      <div class="clip-strip-head">
+        <h3 class="strip-title">Совместные</h3>
+        <span class="clip-strip-note">фиты и коллабы</span>
+      </div>
+      ${scrollerRow(musicClipsFeat().map((item) => watchCard(item)).join(""), "clips")}
     </div>`;
 }
 
@@ -214,14 +230,14 @@ function watchCard(item, index) {
       </div>
     </article>`;
   }
-  return `<article class="card clip-card">
+  return `<article class="card clip-card music-clip${item.feat ? " is-feat" : ""}">
     <div class="poster thumb">
       <img src="${esc(item.thumb)}" alt="" loading="lazy">
+      <span class="clip-play" aria-hidden="true"><i></i></span>
       <a class="poster-link" href="${esc(item.href)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(item.title)}"></a>
     </div>
     <div class="card-body">
       <h3><a href="${esc(item.href)}" target="_blank" rel="noopener noreferrer">${esc(item.title)}</a></h3>
-      <a class="btn pink" href="${esc(item.href)}" target="_blank" rel="noopener noreferrer">Смотреть</a>
     </div>
   </article>`;
 }
@@ -250,6 +266,26 @@ function bindScrollers(root = document) {
       const step = card ? card.getBoundingClientRect().width + 14 : Math.max(scroller.clientWidth * 0.8, 220);
       scroller.scrollBy({ left: dir * step * 2, behavior: "smooth" });
     });
+  });
+  bindClipPlayLights(root);
+}
+
+function bindClipPlayLights(root = document) {
+  $$(".music-clip", root).forEach((card) => {
+    if (card.dataset.lightBound === "1") return;
+    card.dataset.lightBound = "1";
+    const orb = $(".clip-play i", card);
+    if (!orb) return;
+    const setPos = (event) => {
+      const rect = orb.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      const x = ((event.clientX - rect.left) / rect.width) * 100;
+      const y = ((event.clientY - rect.top) / rect.height) * 100;
+      orb.style.setProperty("--mx", `${Math.max(-10, Math.min(110, x))}%`);
+      orb.style.setProperty("--my", `${Math.max(-10, Math.min(110, y))}%`);
+    };
+    card.addEventListener("pointermove", setPos);
+    card.addEventListener("pointerenter", setPos);
   });
 }
 
@@ -509,13 +545,16 @@ function filmCard(item) {
 }
 
 function tourCards() {
-  return TOUR.map((show) => `<a class="tour-card" href="${esc(show.href)}" target="_blank" rel="noopener noreferrer">
+  return TOUR.map((show, index) => {
+    const last = index === TOUR.length - 1;
+    return `<a class="tour-card${last ? " is-last" : ""}" href="${esc(show.href)}" target="_blank" rel="noopener noreferrer">
     <span class="tour-main">
       <span class="tour-date">${esc(show.date)}</span>
       <strong class="tour-city">${esc(show.city)}</strong>
     </span>
     <span class="tour-btn"><span>→</span> Билеты</span>
-  </a>`).join("");
+  </a>`;
+  }).join("");
 }
 
 function renderHome() {
@@ -537,8 +576,8 @@ function renderHome() {
       </section>
       <section class="section" id="releases">
         ${sectionTitle("Релизы", "music.html")}
-        <div class="release-grid">
-          ${RELEASES.filter((item) => !item.stub).slice(0, 5).map((item) => releaseCard(item, { teaser: true })).join("")}
+        <div class="release-grid release-grid-home">
+          ${homeReleaseItems().map((item) => releaseCard(item, { teaser: true })).join("")}
         </div>
       </section>
       <section class="section" id="music-clips">
@@ -581,10 +620,33 @@ function renderHome() {
 
   $("[data-down]").addEventListener("click", () => $("#tour").scrollIntoView({ behavior: "smooth" }));
   bindScrollers($("#page"));
+  // bindTourEgg(); // пасхалка-стикер временно выкл.
   const frame = $(".live-frame iframe");
   const host = location.hostname || "localhost";
   frame.src = `https://player.twitch.tv/?channel=mellsher&parent=${encodeURIComponent(host)}&muted=true`;
 }
+
+/* пасхалка-стикер временно выкл.
+function bindTourEgg() {
+  const egg = $(".tour-egg");
+  if (!egg) return;
+  egg.addEventListener("click", (event) => {
+    event.preventDefault();
+    if (egg.classList.contains("is-peeling")) return;
+    egg.classList.add("is-peeling");
+    const href = egg.href;
+    let finished = false;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      egg.remove();
+      window.open(href, "_blank", "noopener,noreferrer");
+    };
+    egg.addEventListener("animationend", finish, { once: true });
+    setTimeout(finish, 780);
+  });
+}
+*/
 
 function seriesDirection(from, to) {
   const len = SERIES.length;
@@ -746,9 +808,17 @@ function renderSeriesPage() {
     </div>`;
 }
 
+function homeReleaseItems() {
+  const order = ["hm3", "razgrom", "dar", "magnum", "opus", "x", "svet"];
+  return order.map((id) => RELEASES.find((item) => item.id === id)).filter(Boolean);
+}
+
 function releaseCover(item) {
   if (!item.cover) return "";
-  return `<div class="release-cover"><img src="${esc(item.cover)}" alt="${esc(item.title)}"></div>`;
+  const hurry = item.featured
+    ? `<div class="release-hurry" aria-hidden="true"><span>слушай</span><span>скорее</span></div>`
+    : "";
+  return `<div class="release-cover"><img src="${esc(item.cover)}" alt="${esc(item.title)}">${hurry}</div>`;
 }
 
 function releaseCard(item, { teaser = false } = {}) {
@@ -764,10 +834,6 @@ function releaseCard(item, { teaser = false } = {}) {
     </article>`;
   }
   const badge = item.badge || (item.featured ? "Новый релиз" : "");
-  const sentences = item.text.split(/(?<=\.)\s+/);
-  const text = teaser || item.featured
-    ? sentences.slice(0, 2).join(" ")
-    : sentences.slice(0, 3).join(" ");
   const href = item.href || SITE.music;
   return `<article class="release ${item.featured ? "featured" : ""} ${item.cover ? "has-cover" : ""}" id="${esc(item.id)}">
     ${releaseCover(item)}
@@ -775,7 +841,7 @@ function releaseCard(item, { teaser = false } = {}) {
       ${badge ? `<span class="release-badge">${esc(badge)}</span>` : ""}
       <h3>${esc(item.title)}</h3>
       <div class="kind">${esc(item.kind)}${item.year ? ` · ${item.year}` : ""}</div>
-      <p>${esc(text)}</p>
+      <p>${esc(item.text || "")}</p>
       <a class="btn ${item.featured ? "pink" : ""}" href="${esc(href)}" target="_blank" rel="noopener noreferrer">Слушать</a>
     </div>
   </article>`;
