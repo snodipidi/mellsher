@@ -88,8 +88,6 @@ const LINKS = [
 ];
 
 const TOUR = [
-  { date: "13.11", city: "Воронеж", href: "https://xxl.tours/" },
-  { date: "15.11", city: "Краснодар", href: "https://xxl.tours/" },
   { date: "21.11", city: "Казань", href: "https://xxl.tours/" },
   { date: "22.11", city: "Уфа", href: "https://xxl.tours/" },
   { date: "27.11", city: "Ростов-на-Дону", href: "https://xxl.tours/" },
@@ -2035,7 +2033,7 @@ const AUDIENCE = [
     title: "НИ МЕЛЛШЕР",
     href: "https://t.me/NiMellsher",
     image: "assets/nimellsher.png",
-    text: "Самый лучший новостной канал по меллшеру, песни, шоу, аукционы, ирл стримы, обо всём этом вы узнаете здесь!",
+    text: "Новостной канал по Меллшеру",
     action: "Telegram",
   },
   {
@@ -2043,7 +2041,7 @@ const AUDIENCE = [
     title: "MellSher Confession",
     href: "https://t.me/MellSherCONF",
     image: "assets/mellsher-confession.png",
-    text: "Здесь вы найдете фотографии, арты и иной контент связанный с Игорем Шерстюком.",
+    text: "Фотографии, арты и иной контент",
     action: "Telegram",
   },
   {
@@ -2051,7 +2049,7 @@ const AUDIENCE = [
     title: "M5CARDS",
     href: "https://t.me/m5cards",
     image: "assets/m5cards.png",
-    text: "Творческий проект, путешествующий вместе с 5opka и MellSher из города в город. Каждый концерт приносит новую часть коллекции с уникальным художественным оформлением, созданным специально для этого города, а сами артисты собирают её вместе с вами на протяжении всего тура.",
+    text: "Творческий туровый проект bmvrryan'a",
     action: "Telegram",
   },
   {

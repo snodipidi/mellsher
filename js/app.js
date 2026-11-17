@@ -392,17 +392,15 @@ function mountChrome(active) {
           <a href="${SITE.twitch}" target="_blank" rel="noopener noreferrer">Twitch</a>
           <a href="${SITE.youtube}" target="_blank" rel="noopener noreferrer">YouTube</a>
           <a href="${SITE.music}" target="_blank" rel="noopener noreferrer">Яндекс Музыка</a>
-          <a href="${SITE.merch}" target="_blank" rel="noopener noreferrer">Мерч · kapusta.shop</a>
-          <a href="index.html#links">Все ссылки</a>
         </nav>
         <nav aria-label="Разделы">
           <h2>На сайте</h2>
-          <a href="streams.html">Где смотреть нарезки</a>
-          <a href="films.html">Рецензии фильмов</a>
-          <a href="index.html#tour">Прощальный тур</a>
+          <a href="streams.html">Нарезки</a>
+          <a href="music.html">Музыка</a>
+          <a href="films.html">Фильмы</a>
+          <a href="index.html#tour">Тур</a>
           <a href="index.html#merch">Мерч</a>
-          <a href="index.html#fans">От лица аудитории</a>
-          <a href="fan-clips.html">Фан-клипы</a>
+          <a href="index.html#fans">Аудитория</a>
           <a href="index.html#links">Ссылки</a>
         </nav>
       </div>
@@ -612,7 +610,7 @@ function renderHome() {
     <div class="wrap">
       <section class="section" id="tour">
         ${sectionTitle("Прощальный тур", "https://xxl.tours/", "Все даты")}
-        <div class="tour-row">${tourCards()}</div>
+        <div class="tour-row" style="--tour-rows:${Math.ceil(TOUR.length / 2)}">${tourCards()}</div>
       </section>
       <section class="section" id="merch">
         ${sectionTitle("Мерч", SITE.merch, "Весь магазин")}

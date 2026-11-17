@@ -411,6 +411,8 @@ h1, h2, h3, h4 { font-family: Unbounded, Manrope, sans-serif; font-weight: 700; 
 .tour-row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(var(--tour-rows, 3), auto);
+  grid-auto-flow: column;
   gap: 10px 28px;
 }
 /* пасхалка-стикер временно выкл.
@@ -2554,6 +2556,8 @@ a.audience-item:hover {
   .clip-card:not(.film-card) h3 { min-height: 0; }
   .tour-row {
     grid-template-columns: 1fr;
+    grid-template-rows: none;
+    grid-auto-flow: row;
     gap: 0;
   }
   /* пасхалка-стикер временно выкл.
